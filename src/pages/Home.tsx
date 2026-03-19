@@ -4,7 +4,7 @@ import { Helmet } from "react-helmet-async";
 import { wpFetch } from "../lib/wpCache";
 import type { WPPost } from "../types/wordpress";
 
-const API = "https://midcent.se/wp-json/wp/v2/posts?categories=5613&per_page=24&_embed";
+const API = "https://midcent.se/wp-json/wp/v2/posts?categories=5613&per_page=100&_embed";
 
 export default function Home() {
   const [posts, setPosts] = useState<WPPost[]>([]);
