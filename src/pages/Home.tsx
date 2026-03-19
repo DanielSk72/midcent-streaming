@@ -64,8 +64,16 @@ function matchesService(post: WPPost, terms: string[]): boolean {
 export default function Home() {
   const [posts, setPosts] = useState<WPPost[]>([]);
   const [loading, setLoading] = useState(true);
-  const [active, setActive] = useState<string | null>(null);
+  const [activeServices, setActiveServices] = useState<Set<string>>(new Set());
   const [activeMonth, setActiveMonth] = useState<string | null>(null);
+
+  function toggleService(label: string) {
+    setActiveServices(prev => {
+      const next = new Set(prev);
+      next.has(label) ? next.delete(label) : next.add(label);
+      return next;
+    });
+  }
 
   useEffect(() => {
     fetchAll().then((data) => {
@@ -74,8 +82,12 @@ export default function Home() {
     });
   }, []);
 
-  const filtered = active
-    ? posts.filter(p => matchesService(p, SERVICES.find(s => s.label === active)!.terms))
+  const filtered = activeServices.size > 0
+    ? posts.filter(p =>
+        Array.from(activeServices).some(label =>
+          matchesService(p, SERVICES.find(s => s.label === label)!.terms)
+        )
+      )
     : posts;
 
   const timePosts = filterByTime(filtered, activeMonth ?? "alla");
@@ -126,23 +138,21 @@ export default function Home() {
 
         <div className="container">
           <div className="service-filters">
-            <button
-              className={`service-btn${active === null ? " active" : ""}`}
-              style={{ background: "#555" }}
-              onClick={() => setActive(null)}
-            >
-              Alla
-            </button>
             {SERVICES.map(s => (
               <button
                 key={s.label}
-                className={`service-btn${active === s.label ? " active" : ""}`}
+                className={`service-btn${activeServices.has(s.label) ? " active" : ""}`}
                 style={{ background: s.color }}
-                onClick={() => setActive(active === s.label ? null : s.label)}
+                onClick={() => toggleService(s.label)}
               >
                 {s.label}
               </button>
             ))}
+            {activeServices.size > 0 && (
+              <button className="service-btn clear-btn" onClick={() => setActiveServices(new Set())}>
+                Rensa filter ✕
+              </button>
+            )}
           </div>
 
           <div className="month-filters">
