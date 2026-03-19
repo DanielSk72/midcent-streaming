@@ -34,39 +34,26 @@ async function fetchAll(): Promise<WPPost[]> {
   return all.filter(p => !isBookReview(p));
 }
 
-const CURRENT_YEAR = new Date().getFullYear();
+const NOW = Date.now();
+const DAYS_30 = 30 * 24 * 60 * 60 * 1000;
+const YEARS_5 = 5 * 365.25 * 24 * 60 * 60 * 1000;
 
-function postPeriod(date: string): string {
-  const year = new Date(date).getFullYear();
-  if (year === CURRENT_YEAR) {
-    const d = new Date(date);
-    return `${year}-${String(d.getMonth() + 1).padStart(2, "0")}`;
-  }
-  if (year >= CURRENT_YEAR - 2) return String(year);
-  return "older";
-}
+const TIME_FILTERS = [
+  { key: "alla",    label: "Alla" },
+  { key: "nyheter", label: "Nyheter" },
+  { key: "5ar",     label: "Senaste 5 åren" },
+  { key: "aldre",   label: "Äldre" },
+];
 
-function periodLabel(key: string): string {
-  if (key === "older") return "Äldre";
-  if (key.length === 4) return key;
-  const [year, month] = key.split("-");
-  return new Date(Number(year), Number(month) - 1).toLocaleString("sv-SE", { month: "long", year: "numeric" });
-}
-
-function groupByPeriod(posts: WPPost[]): Array<{ key: string; label: string; posts: WPPost[] }> {
-  const map = new Map<string, WPPost[]>();
-  for (const post of posts) {
-    const key = postPeriod(post.date);
-    if (!map.has(key)) map.set(key, []);
-    map.get(key)!.push(post);
-  }
-  // Sort: current year months first (desc), then prior years desc, then older
-  const sorted = Array.from(map.keys()).sort((a, b) => {
-    if (a === "older") return 1;
-    if (b === "older") return -1;
-    return b.localeCompare(a);
+function filterByTime(posts: WPPost[], key: string): WPPost[] {
+  if (key === "alla") return posts;
+  return posts.filter(p => {
+    const age = NOW - new Date(p.date).getTime();
+    if (key === "nyheter") return age <= DAYS_30;
+    if (key === "5ar")     return age <= YEARS_5;
+    if (key === "aldre")   return age > YEARS_5;
+    return true;
   });
-  return sorted.map(key => ({ key, label: periodLabel(key), posts: map.get(key)! }));
 }
 
 function matchesService(post: WPPost, terms: string[]): boolean {
@@ -91,12 +78,9 @@ export default function Home() {
     ? posts.filter(p => matchesService(p, SERVICES.find(s => s.label === active)!.terms))
     : posts;
 
-  const periods = groupByPeriod(filtered);
-  const hero = filtered[0];
-
-  const visiblePeriods = activeMonth
-    ? periods.filter(m => m.key === activeMonth)
-    : periods;
+  const timePosts = filterByTime(filtered, activeMonth ?? "alla");
+  const hero = timePosts[0];
+  const rest = timePosts.slice(1);
 
   return (
     <>
@@ -162,42 +146,31 @@ export default function Home() {
           </div>
 
           <div className="month-filters">
-            <button
-              className={`month-btn${activeMonth === null ? " active" : ""}`}
-              onClick={() => setActiveMonth(null)}
-            >
-              Alla månader
-            </button>
-            {periods.map(m => (
+            {TIME_FILTERS.map(f => (
               <button
-                key={m.key}
-                className={`month-btn${activeMonth === m.key ? " active" : ""}`}
-                onClick={() => setActiveMonth(activeMonth === m.key ? null : m.key)}
+                key={f.key}
+                className={`month-btn${(activeMonth ?? "alla") === f.key ? " active" : ""}`}
+                onClick={() => setActiveMonth(f.key === "alla" ? null : f.key)}
               >
-                {m.label}
+                {f.label}
               </button>
             ))}
           </div>
 
-          {visiblePeriods.map(({ key, label, posts: monthPosts }) => (
-            <div key={key} className="month-section">
-              <h2 className="month-heading">{label}</h2>
-              <div className="grid">
-                {monthPosts.map((post) => {
-                  const image = post._embedded?.["wp:featuredmedia"]?.[0]?.source_url;
-                  return (
-                    <Link to={`/${post.slug}`} key={post.id} className="card">
-                      {image && <img src={image} alt={post._embedded?.["wp:featuredmedia"]?.[0]?.alt_text} className="card-image" />}
-                      <div className="card-body">
-                        <h3 dangerouslySetInnerHTML={{ __html: post.title.rendered }} />
-                        <p dangerouslySetInnerHTML={{ __html: post.excerpt.rendered }} />
-                      </div>
-                    </Link>
-                  );
-                })}
-              </div>
-            </div>
-          ))}
+          <div className="grid">
+            {rest.map((post) => {
+              const image = post._embedded?.["wp:featuredmedia"]?.[0]?.source_url;
+              return (
+                <Link to={`/${post.slug}`} key={post.id} className="card">
+                  {image && <img src={image} alt={post._embedded?.["wp:featuredmedia"]?.[0]?.alt_text} className="card-image" />}
+                  <div className="card-body">
+                    <h3 dangerouslySetInnerHTML={{ __html: post.title.rendered }} />
+                    <p dangerouslySetInnerHTML={{ __html: post.excerpt.rendered }} />
+                  </div>
+                </Link>
+              );
+            })}
+          </div>
         </div>
       </main>
 
