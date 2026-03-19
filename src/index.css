@@ -597,6 +597,7 @@ body {
   .latest-grid { grid-template-columns: 1fr; }
   .card-list { grid-template-columns: 100px 1fr; gap: 12px; }
   .card-list-image { width: 100px; height: 68px; }
+  .card-list-body p { display: none; }
   .similar-grid { grid-template-columns: 1fr; }
 }
 
