@@ -34,24 +34,39 @@ async function fetchAll(): Promise<WPPost[]> {
   return all.filter(p => !isBookReview(p));
 }
 
-function monthKey(date: string) {
-  const d = new Date(date);
-  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}`;
+const CURRENT_YEAR = new Date().getFullYear();
+
+function postPeriod(date: string): string {
+  const year = new Date(date).getFullYear();
+  if (year === CURRENT_YEAR) {
+    const d = new Date(date);
+    return `${year}-${String(d.getMonth() + 1).padStart(2, "0")}`;
+  }
+  if (year >= CURRENT_YEAR - 2) return String(year);
+  return "older";
 }
 
-function monthLabel(key: string) {
+function periodLabel(key: string): string {
+  if (key === "older") return "Äldre";
+  if (key.length === 4) return key;
   const [year, month] = key.split("-");
   return new Date(Number(year), Number(month) - 1).toLocaleString("sv-SE", { month: "long", year: "numeric" });
 }
 
-function groupByMonth(posts: WPPost[]): Array<{ key: string; label: string; posts: WPPost[] }> {
+function groupByPeriod(posts: WPPost[]): Array<{ key: string; label: string; posts: WPPost[] }> {
   const map = new Map<string, WPPost[]>();
   for (const post of posts) {
-    const key = monthKey(post.date);
+    const key = postPeriod(post.date);
     if (!map.has(key)) map.set(key, []);
     map.get(key)!.push(post);
   }
-  return Array.from(map.entries()).map(([key, posts]) => ({ key, label: monthLabel(key), posts }));
+  // Sort: current year months first (desc), then prior years desc, then older
+  const sorted = Array.from(map.keys()).sort((a, b) => {
+    if (a === "older") return 1;
+    if (b === "older") return -1;
+    return b.localeCompare(a);
+  });
+  return sorted.map(key => ({ key, label: periodLabel(key), posts: map.get(key)! }));
 }
 
 function matchesService(post: WPPost, terms: string[]): boolean {
@@ -76,12 +91,12 @@ export default function Home() {
     ? posts.filter(p => matchesService(p, SERVICES.find(s => s.label === active)!.terms))
     : posts;
 
-  const months = groupByMonth(filtered);
+  const periods = groupByPeriod(filtered);
   const hero = filtered[0];
 
-  const visibleMonths = activeMonth
-    ? months.filter(m => m.key === activeMonth)
-    : months;
+  const visiblePeriods = activeMonth
+    ? periods.filter(m => m.key === activeMonth)
+    : periods;
 
   return (
     <>
@@ -153,7 +168,7 @@ export default function Home() {
             >
               Alla månader
             </button>
-            {months.map(m => (
+            {periods.map(m => (
               <button
                 key={m.key}
                 className={`month-btn${activeMonth === m.key ? " active" : ""}`}
@@ -164,7 +179,7 @@ export default function Home() {
             ))}
           </div>
 
-          {visibleMonths.map(({ key, label, posts: monthPosts }) => (
+          {visiblePeriods.map(({ key, label, posts: monthPosts }) => (
             <div key={key} className="month-section">
               <h2 className="month-heading">{label}</h2>
               <div className="grid">
