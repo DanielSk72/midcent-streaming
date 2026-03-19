@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { Helmet } from "react-helmet-async";
-import { wpFetch } from "../lib/wpCache";
+import { wpFetch, wpFetchPaged } from "../lib/wpCache";
 import type { WPPost } from "../types/wordpress";
 import Header from "../components/Header";
 
@@ -20,19 +20,21 @@ function isBookReview(post: WPPost): boolean {
   return post.class_list?.includes("tag-bokrecension") ?? false;
 }
 
+const LIST_PARAMS = "categories=1&per_page=100&_embed=wp:featuredmedia";
+
 async function fetchAll(): Promise<WPPost[]> {
-  let page = 1;
-  const all: WPPost[] = [];
-  while (true) {
-    const batch = await wpFetch<WPPost[]>(
-      `${BASE}?categories=1&per_page=100&page=${page}&_embed`
-    );
-    if (!batch.length) break;
-    all.push(...batch);
-    if (batch.length < 100) break;
-    page++;
-  }
-  return all.filter(p => !isBookReview(p));
+  const page1url = `${BASE}?${LIST_PARAMS}&page=1`;
+  const { data: page1, totalPages } = await wpFetchPaged<WPPost[]>(page1url);
+
+  const rest = totalPages > 1
+    ? await Promise.all(
+        Array.from({ length: totalPages - 1 }, (_, i) =>
+          wpFetch<WPPost[]>(`${BASE}?${LIST_PARAMS}&page=${i + 2}`)
+        )
+      )
+    : [];
+
+  return [page1, ...rest].flat().filter(p => !isBookReview(p));
 }
 
 const NOW = Date.now();

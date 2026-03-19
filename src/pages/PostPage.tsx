@@ -5,8 +5,9 @@ import { wpFetch } from "../lib/wpCache";
 import type { WPPost } from "../types/wordpress";
 import Header from "../components/Header";
 
-const RELATED_API = "https://midcent.se/wp-json/wp/v2/posts?per_page=8&_embed";
-const SIMILAR_API  = "https://midcent.se/wp-json/wp/v2/posts?categories=1&per_page=50&_embed";
+const RELATED_API = "https://midcent.se/wp-json/wp/v2/posts?per_page=8&_embed=wp:featuredmedia";
+// Reuse the same URL the home page caches — no extra network request if already visited
+const SIMILAR_API  = "https://midcent.se/wp-json/wp/v2/posts?categories=1&per_page=100&_embed=wp:featuredmedia&page=1";
 
 const STOP = new Set(["och", "i", "på", "att", "som", "en", "ett", "är", "av", "med", "den", "det", "de", "för", "till", "om", "men", "han", "hon", "vi", "nu", "från", "the", "a", "an", "of", "in", "to", "and", "is"]);
 

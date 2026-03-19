@@ -29,3 +29,32 @@ export async function wpFetch<T>(url: string): Promise<T> {
   lsSet(url, data);
   return data;
 }
+
+// Fetch page 1 and return data + total pages from headers (for parallel pagination)
+export async function wpFetchPaged<T>(url: string): Promise<{ data: T; totalPages: number }> {
+  const cacheKey = url;
+  if (memCache.has(cacheKey)) {
+    const metaKey = `meta:${cacheKey}`;
+    const totalPages = (memCache.get(metaKey) as number) ?? 1;
+    return { data: memCache.get(cacheKey) as T, totalPages };
+  }
+
+  const cached = lsGet<T>(cacheKey);
+  const cachedMeta = lsGet<{ totalPages: number }>(`meta:${cacheKey}`);
+  if (cached && cachedMeta) {
+    memCache.set(cacheKey, cached);
+    memCache.set(`meta:${cacheKey}`, cachedMeta.totalPages);
+    return { data: cached, totalPages: cachedMeta.totalPages };
+  }
+
+  const res = await fetch(url, { cache: "force-cache" });
+  if (!res.ok) throw new Error(`WP API error ${res.status}`);
+  const totalPages = parseInt(res.headers.get("X-WP-TotalPages") ?? "1", 10);
+  const data: T = await res.json();
+
+  memCache.set(cacheKey, data);
+  memCache.set(`meta:${cacheKey}`, totalPages);
+  lsSet(cacheKey, data);
+  lsSet(`meta:${cacheKey}`, { totalPages });
+  return { data, totalPages };
+}
