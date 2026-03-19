@@ -4,30 +4,21 @@ import { Helmet } from "react-helmet-async";
 import { wpFetch, wpFetchPaged, wpGetCached } from "../lib/wpCache";
 import type { WPPost } from "../types/wordpress";
 import Header from "../components/Header";
+import { getCategoryConfig } from "../config/categories";
+import type { ServiceFilter } from "../config/categories";
 
-const BASE = "https://midcent.se/wp-json/wp/v2/posts";
-const SERVICES = [
-  { label: "Netflix",      color: "#E50914", terms: ["netflix"] },
-  { label: "HBO Max",      color: "#6A0DAD", terms: ["hbo", "hbo max", "hbomax"] },
-  { label: "Disney+",      color: "#1B4FBB", terms: ["disney+", "disney plus", "disneyplus", "disney+"] },
-  { label: "Amazon Prime", color: "#1A6DB5", terms: ["amazon prime", "prime video", "amazon video"] },
-  { label: "Apple TV+",    color: "#000000", terms: ["apple tv+", "apple tv plus", "appletv", "apple tv"] },
-  { label: "Viaplay",      color: "#C1143C", terms: ["viaplay"] },
-  { label: "Showtime",     color: "#B22222", terms: ["showtime"] },
-];
-
-const EXCLUDED_TAGS = ["tag-bokrecension", "tag-ljudbocker", "tag-musikrecension"];
+const config = getCategoryConfig();
+const BASE = `https://midcent.se/wp-json/wp/v2/posts`;
+const LIST_PARAMS = `categories=${config.wpCategoryId}&per_page=100&_embed=wp:featuredmedia`;
+const PAGE1_URL = `${BASE}?${LIST_PARAMS}&page=1`;
 
 function isExcluded(post: WPPost): boolean {
-  return post.class_list?.some(c => EXCLUDED_TAGS.includes(c)) ?? false;
+  if (!config.excludedTags?.length) return false;
+  return post.class_list?.some(c => config.excludedTags!.includes(c)) ?? false;
 }
 
-const LIST_PARAMS = "categories=1&per_page=100&_embed=wp:featuredmedia";
-
 async function fetchAll(): Promise<WPPost[]> {
-  const page1url = `${BASE}?${LIST_PARAMS}&page=1`;
-  const { data: page1, totalPages } = await wpFetchPaged<WPPost[]>(page1url);
-
+  const { data: page1, totalPages } = await wpFetchPaged<WPPost[]>(PAGE1_URL);
   const rest = totalPages > 1
     ? await Promise.all(
         Array.from({ length: totalPages - 1 }, (_, i) =>
@@ -35,13 +26,12 @@ async function fetchAll(): Promise<WPPost[]> {
         )
       )
     : [];
-
   return [page1, ...rest].flat().filter(p => !isExcluded(p));
 }
 
 const NOW = Date.now();
-const DAYS_30 = 30 * 24 * 60 * 60 * 1000;
-const YEARS_5 = 5 * 365.25 * 24 * 60 * 60 * 1000;
+const DAYS_30  = 30 * 24 * 60 * 60 * 1000;
+const YEARS_5  = 5 * 365.25 * 24 * 60 * 60 * 1000;
 
 const TIME_FILTERS = [
   { key: "alla",    label: "Alla" },
@@ -61,20 +51,19 @@ function filterByTime(posts: WPPost[], key: string): WPPost[] {
   });
 }
 
-function detectService(post: WPPost) {
-  return SERVICES.find(s => matchesService(post, s.terms)) ?? null;
-}
-
 function matchesService(post: WPPost, terms: string[]): boolean {
   const text = (post.title.rendered + " " + post.excerpt.rendered + " " + post.content.rendered).toLowerCase();
   return terms.some(t => text.includes(t.toLowerCase()));
 }
 
+function detectService(post: WPPost): ServiceFilter | null {
+  if (!config.serviceFilters?.length) return null;
+  return config.serviceFilters.find(s => matchesService(post, s.terms)) ?? null;
+}
+
 function formatDate(date: string) {
   return new Date(date).toLocaleDateString("sv-SE", { day: "numeric", month: "short", year: "numeric" });
 }
-
-const PAGE1_URL = `${BASE}?${LIST_PARAMS}&page=1`;
 
 export default function Home() {
   const [posts, setPosts] = useState<WPPost[]>(() => {
@@ -83,7 +72,7 @@ export default function Home() {
   });
   const [loading, setLoading] = useState(() => !wpGetCached<WPPost[]>(PAGE1_URL));
   const [activeServices, setActiveServices] = useState<Set<string>>(new Set());
-  const [activeMonth, setActiveMonth] = useState<string | null>(null);
+  const [activeTime, setActiveTime] = useState<string | null>(null);
 
   function toggleService(label: string) {
     setActiveServices(prev => {
@@ -94,7 +83,7 @@ export default function Home() {
   }
 
   useEffect(() => {
-    fetchAll().then((data) => {
+    fetchAll().then(data => {
       setPosts(data);
       setLoading(false);
     });
@@ -103,13 +92,12 @@ export default function Home() {
   const filtered = activeServices.size > 0
     ? posts.filter(p =>
         Array.from(activeServices).some(label =>
-          matchesService(p, SERVICES.find(s => s.label === label)!.terms)
+          matchesService(p, config.serviceFilters!.find(s => s.label === label)!.terms)
         )
       )
     : posts;
 
-  const timePosts = filterByTime(filtered, activeMonth ?? "alla");
-
+  const timePosts  = filterByTime(filtered, activeTime ?? "alla");
   const hero       = timePosts[0];
   const topStories = timePosts.slice(1, 3);
   const latest     = timePosts.slice(3, 6);
@@ -119,9 +107,9 @@ export default function Home() {
   return (
     <>
       <Helmet>
-        <title>Streaming — Midcent</title>
-        <meta name="description" content="Bästa tips om film, serier och streaming för dig som vet vad du vill se." />
-        <link rel="canonical" href="https://streaming.midcent.se" />
+        <title>{config.metaTitle}</title>
+        <meta name="description" content={config.metaDescription} />
+        <link rel="canonical" href={config.canonicalUrl} />
       </Helmet>
 
       <Header />
@@ -141,7 +129,7 @@ export default function Home() {
                 />
               )}
               <div className="hero-overlay">
-                <span className="label">Streaming</span>
+                <span className="label">{config.name}</span>
                 <h1 dangerouslySetInnerHTML={{ __html: hero.title.rendered }} />
                 <p dangerouslySetInnerHTML={{ __html: hero.excerpt.rendered }} />
               </div>
@@ -150,37 +138,40 @@ export default function Home() {
         )}
 
         <div className="container">
-          <div className="service-filters">
-            {SERVICES.map(s => (
-              <button
-                key={s.label}
-                className={`service-btn${activeServices.has(s.label) ? " active" : ""}`}
-                style={{ background: s.color }}
-                onClick={() => toggleService(s.label)}
-              >
-                {s.label}
-              </button>
-            ))}
-            {activeServices.size > 0 && (
-              <button className="service-btn clear-btn" onClick={() => setActiveServices(new Set())}>
-                Rensa filter ✕
-              </button>
-            )}
-          </div>
+
+          {/* Service filters — only shown for categories that have them (e.g. Streaming) */}
+          {config.serviceFilters && config.serviceFilters.length > 0 && (
+            <div className="service-filters">
+              {config.serviceFilters.map(s => (
+                <button
+                  key={s.label}
+                  className={`service-btn${activeServices.has(s.label) ? " active" : ""}`}
+                  style={{ background: s.color }}
+                  onClick={() => toggleService(s.label)}
+                >
+                  {s.label}
+                </button>
+              ))}
+              {activeServices.size > 0 && (
+                <button className="service-btn clear-btn" onClick={() => setActiveServices(new Set())}>
+                  Rensa filter ✕
+                </button>
+              )}
+            </div>
+          )}
 
           <div className="month-filters">
             {TIME_FILTERS.map(f => (
               <button
                 key={f.key}
-                className={`month-btn${(activeMonth ?? "alla") === f.key ? " active" : ""}`}
-                onClick={() => setActiveMonth(f.key === "alla" ? null : f.key)}
+                className={`month-btn${(activeTime ?? "alla") === f.key ? " active" : ""}`}
+                onClick={() => setActiveTime(f.key === "alla" ? null : f.key)}
               >
                 {f.label}
               </button>
             ))}
           </div>
 
-          {/* Zone 1 — Topphistorier */}
           {topStories.length > 0 && (
             <section className="zone">
               <p className="section-heading">Populära</p>
@@ -205,7 +196,6 @@ export default function Home() {
             </section>
           )}
 
-          {/* Zone 2 — Senaste */}
           {latest.length > 0 && (
             <section className="zone">
               <p className="section-heading">Nyheter</p>
@@ -230,7 +220,6 @@ export default function Home() {
             </section>
           )}
 
-          {/* Zone 3 — Fler nyheter (horizontal list) */}
           {listItems.length > 0 && (
             <section className="zone">
               <p className="section-heading">Fler nyheter</p>
@@ -256,7 +245,6 @@ export default function Home() {
             </section>
           )}
 
-          {/* Zone 4 — Arkiv */}
           {overflow.length > 0 && (
             <section className="zone">
               <p className="section-heading">Arkiv</p>
