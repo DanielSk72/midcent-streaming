@@ -33,6 +33,8 @@ export default function PostPage() {
   const [similar, setSimilar] = useState<WPPost[]>([]);
   const [loading, setLoading] = useState(true);
 
+  useEffect(() => { window.scrollTo(0, 0); }, [slug]);
+
   useEffect(() => {
     if (!slug) return;
     Promise.all([
