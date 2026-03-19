@@ -15,6 +15,13 @@ function lsSet(url: string, data: unknown) {
   try { localStorage.setItem(url, JSON.stringify({ data, ts: Date.now() })); } catch {}
 }
 
+export function wpGetCached<T>(url: string): T | null {
+  if (memCache.has(url)) return memCache.get(url) as T;
+  const cached = lsGet<T>(url);
+  if (cached) memCache.set(url, cached);
+  return cached;
+}
+
 export async function wpFetch<T>(url: string): Promise<T> {
   if (memCache.has(url)) return memCache.get(url) as T;
 

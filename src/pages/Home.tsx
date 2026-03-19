@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { Helmet } from "react-helmet-async";
-import { wpFetch, wpFetchPaged } from "../lib/wpCache";
+import { wpFetch, wpFetchPaged, wpGetCached } from "../lib/wpCache";
 import type { WPPost } from "../types/wordpress";
 import Header from "../components/Header";
 
@@ -72,9 +72,14 @@ function formatDate(date: string) {
   return new Date(date).toLocaleDateString("sv-SE", { day: "numeric", month: "short", year: "numeric" });
 }
 
+const PAGE1_URL = `${BASE}?${LIST_PARAMS}&page=1`;
+
 export default function Home() {
-  const [posts, setPosts] = useState<WPPost[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [posts, setPosts] = useState<WPPost[]>(() => {
+    const cached = wpGetCached<WPPost[]>(PAGE1_URL);
+    return cached ? cached.filter(p => !isBookReview(p)) : [];
+  });
+  const [loading, setLoading] = useState(() => !wpGetCached<WPPost[]>(PAGE1_URL));
   const [activeServices, setActiveServices] = useState<Set<string>>(new Set());
   const [activeMonth, setActiveMonth] = useState<string | null>(null);
 
