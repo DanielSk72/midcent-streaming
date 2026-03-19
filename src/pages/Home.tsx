@@ -59,6 +59,10 @@ function filterByTime(posts: WPPost[], key: string): WPPost[] {
   });
 }
 
+function detectService(post: WPPost) {
+  return SERVICES.find(s => matchesService(post, s.terms)) ?? null;
+}
+
 function matchesService(post: WPPost, terms: string[]): boolean {
   const text = (post.title.rendered + " " + post.excerpt.rendered + " " + post.content.rendered).toLowerCase();
   return terms.some(t => text.includes(t.toLowerCase()));
@@ -172,13 +176,17 @@ export default function Home() {
           {/* Zone 1 — Topphistorier */}
           {topStories.length > 0 && (
             <section className="zone">
-              <p className="section-heading">Topphistorier</p>
+              <p className="section-heading">Populära</p>
               <div className="top-stories">
                 {topStories.map(post => {
                   const image = post._embedded?.["wp:featuredmedia"]?.[0]?.source_url;
+                  const service = detectService(post);
                   return (
                     <Link to={`/${post.slug}`} key={post.id} className="card-large">
-                      {image && <img src={image} alt={post._embedded?.["wp:featuredmedia"]?.[0]?.alt_text} className="card-image" loading="lazy" />}
+                      <div className="card-img-wrap">
+                        {image && <img src={image} alt={post._embedded?.["wp:featuredmedia"]?.[0]?.alt_text} className="card-image" loading="lazy" />}
+                        {service && <span className="service-badge" style={{ background: service.color }}>{service.label}</span>}
+                      </div>
                       <div className="card-body">
                         <h3 dangerouslySetInnerHTML={{ __html: post.title.rendered }} />
                         <p dangerouslySetInnerHTML={{ __html: post.excerpt.rendered }} />
@@ -193,13 +201,17 @@ export default function Home() {
           {/* Zone 2 — Senaste */}
           {latest.length > 0 && (
             <section className="zone">
-              <p className="section-heading">Senaste</p>
+              <p className="section-heading">Nyheter</p>
               <div className="latest-grid">
                 {latest.map(post => {
                   const image = post._embedded?.["wp:featuredmedia"]?.[0]?.source_url;
+                  const service = detectService(post);
                   return (
                     <Link to={`/${post.slug}`} key={post.id} className="card">
-                      {image && <img src={image} alt={post._embedded?.["wp:featuredmedia"]?.[0]?.alt_text} className="card-image" loading="lazy" />}
+                      <div className="card-img-wrap">
+                        {image && <img src={image} alt={post._embedded?.["wp:featuredmedia"]?.[0]?.alt_text} className="card-image" loading="lazy" />}
+                        {service && <span className="service-badge" style={{ background: service.color }}>{service.label}</span>}
+                      </div>
                       <div className="card-body">
                         <h3 dangerouslySetInnerHTML={{ __html: post.title.rendered }} />
                         <p dangerouslySetInnerHTML={{ __html: post.excerpt.rendered }} />
@@ -218,9 +230,13 @@ export default function Home() {
               <div className="list-cards">
                 {listItems.map(post => {
                   const image = post._embedded?.["wp:featuredmedia"]?.[0]?.source_url;
+                  const service = detectService(post);
                   return (
                     <Link to={`/${post.slug}`} key={post.id} className="card-list">
-                      {image && <img src={image} alt={post._embedded?.["wp:featuredmedia"]?.[0]?.alt_text} className="card-list-image" loading="lazy" />}
+                      <div className="card-img-wrap">
+                        {image && <img src={image} alt={post._embedded?.["wp:featuredmedia"]?.[0]?.alt_text} className="card-list-image" loading="lazy" />}
+                        {service && <span className="service-badge" style={{ background: service.color }}>{service.label}</span>}
+                      </div>
                       <div className="card-list-body">
                         <span className="card-list-date">{formatDate(post.date)}</span>
                         <h3 dangerouslySetInnerHTML={{ __html: post.title.rendered }} />
@@ -240,9 +256,13 @@ export default function Home() {
               <div className="grid">
                 {overflow.map(post => {
                   const image = post._embedded?.["wp:featuredmedia"]?.[0]?.source_url;
+                  const service = detectService(post);
                   return (
                     <Link to={`/${post.slug}`} key={post.id} className="card">
-                      {image && <img src={image} alt={post._embedded?.["wp:featuredmedia"]?.[0]?.alt_text} className="card-image" loading="lazy" />}
+                      <div className="card-img-wrap">
+                        {image && <img src={image} alt={post._embedded?.["wp:featuredmedia"]?.[0]?.alt_text} className="card-image" loading="lazy" />}
+                        {service && <span className="service-badge" style={{ background: service.color }}>{service.label}</span>}
+                      </div>
                       <div className="card-body">
                         <h3 dangerouslySetInnerHTML={{ __html: post.title.rendered }} />
                         <p dangerouslySetInnerHTML={{ __html: post.excerpt.rendered }} />

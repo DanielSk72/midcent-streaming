@@ -499,3 +499,27 @@ body {
   .card-list-image { width: 100px; height: 68px; }
   .similar-grid { grid-template-columns: 1fr; }
 }
+
+/* Service badge */
+.card-img-wrap { position: relative; display: block; }
+
+.service-badge {
+  position: absolute;
+  bottom: 8px;
+  left: 8px;
+  color: #fff;
+  font-family: 'Roboto Condensed', sans-serif;
+  font-size: 0.65rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  padding: 3px 8px;
+  border-radius: 2px;
+  pointer-events: none;
+}
+
+.service-badge--inline {
+  position: static;
+  display: inline-block;
+  margin-bottom: 4px;
+}
