@@ -4,20 +4,53 @@ import { Helmet } from "react-helmet-async";
 import { wpFetch } from "../lib/wpCache";
 import type { WPPost } from "../types/wordpress";
 
-const API = "https://midcent.se/wp-json/wp/v2/posts?categories=5613&per_page=100&_embed";
+const BASE = "https://midcent.se/wp-json/wp/v2/posts";
+const SERVICES = [
+  { label: "Netflix",      color: "#E50914", search: "netflix" },
+  { label: "HBO Max",      color: "#6A0DAD", search: "hbo" },
+  { label: "Disney+",      color: "#1B4FBB", search: "disney" },
+  { label: "Amazon Prime", color: "#1A6DB5", search: "amazon prime" },
+  { label: "Apple TV+",    color: "#000000", search: "apple tv" },
+  { label: "Viaplay",      color: "#C1143C", search: "viaplay" },
+  { label: "Showtime",     color: "#B22222", search: "showtime" },
+];
+
+async function fetchAll(): Promise<WPPost[]> {
+  const requests = [
+    wpFetch<WPPost[]>(`${BASE}?categories=5613,5614&per_page=100&_embed`),
+    ...SERVICES.map(s =>
+      wpFetch<WPPost[]>(`${BASE}?search=${encodeURIComponent(s.search)}&per_page=50&_embed`)
+    ),
+  ];
+  const results = await Promise.all(requests);
+  const all = results.flat();
+  // Deduplicate by id, preserve order
+  const seen = new Set<number>();
+  return all.filter(p => seen.has(p.id) ? false : seen.add(p.id) && true);
+}
+
+function matchesService(post: WPPost, service: string): boolean {
+  const text = (post.title.rendered + " " + post.excerpt.rendered + " " + post.content.rendered).toLowerCase();
+  return text.includes(service.toLowerCase());
+}
 
 export default function Home() {
   const [posts, setPosts] = useState<WPPost[]>([]);
   const [loading, setLoading] = useState(true);
+  const [active, setActive] = useState<string | null>(null);
 
   useEffect(() => {
-    wpFetch<WPPost[]>(API).then((data) => {
+    fetchAll().then((data) => {
       setPosts(data);
       setLoading(false);
     });
   }, []);
 
-  const [hero, ...rest] = posts;
+  const filtered = active
+    ? posts.filter(p => matchesService(p, SERVICES.find(s => s.label === active)!.search))
+    : posts;
+
+  const [hero, ...rest] = filtered;
 
   return (
     <>
@@ -60,6 +93,26 @@ export default function Home() {
         )}
 
         <div className="container">
+          <div className="service-filters">
+            <button
+              className={`service-btn${active === null ? " active" : ""}`}
+              style={{ background: "#555" }}
+              onClick={() => setActive(null)}
+            >
+              Alla
+            </button>
+            {SERVICES.map(s => (
+              <button
+                key={s.label}
+                className={`service-btn${active === s.label ? " active" : ""}`}
+                style={{ background: s.color }}
+                onClick={() => setActive(active === s.label ? null : s.label)}
+              >
+                {s.label}
+              </button>
+            ))}
+          </div>
+
           <div className="grid">
             {rest.map((post) => {
               const image = post._embedded?.["wp:featuredmedia"]?.[0]?.source_url;

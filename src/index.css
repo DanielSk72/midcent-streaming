@@ -91,6 +91,28 @@ body {
   margin-bottom: 8px;
 }
 
+/* Service filters */
+.service-filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: 32px;
+}
+.service-btn {
+  border: none;
+  color: var(--white);
+  font-family: 'Open Sans', sans-serif;
+  font-size: 0.8rem;
+  font-weight: 400;
+  padding: 8px 16px;
+  cursor: pointer;
+  border-radius: 2px;
+  opacity: 0.75;
+  transition: opacity 0.2s, transform 0.1s;
+}
+.service-btn:hover { opacity: 1; }
+.service-btn.active { opacity: 1; transform: scale(1.05); outline: 2px solid white; }
+
 /* Grid */
 .grid {
   display: grid;
