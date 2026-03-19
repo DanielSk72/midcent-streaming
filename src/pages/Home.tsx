@@ -6,13 +6,13 @@ import type { WPPost } from "../types/wordpress";
 
 const BASE = "https://midcent.se/wp-json/wp/v2/posts";
 const SERVICES = [
-  { label: "Netflix",      color: "#E50914", search: "netflix" },
-  { label: "HBO Max",      color: "#6A0DAD", search: "hbo" },
-  { label: "Disney+",      color: "#1B4FBB", search: "disney" },
-  { label: "Amazon Prime", color: "#1A6DB5", search: "amazon prime" },
-  { label: "Apple TV+",    color: "#000000", search: "apple tv" },
-  { label: "Viaplay",      color: "#C1143C", search: "viaplay" },
-  { label: "Showtime",     color: "#B22222", search: "showtime" },
+  { label: "Netflix",      color: "#E50914", terms: ["netflix"] },
+  { label: "HBO Max",      color: "#6A0DAD", terms: ["hbo", "hbo max", "hbomax"] },
+  { label: "Disney+",      color: "#1B4FBB", terms: ["disney+", "disney plus", "disneyplus", "disney+"] },
+  { label: "Amazon Prime", color: "#1A6DB5", terms: ["amazon prime", "prime video", "amazon video"] },
+  { label: "Apple TV+",    color: "#000000", terms: ["apple tv+", "apple tv plus", "appletv", "apple tv"] },
+  { label: "Viaplay",      color: "#C1143C", terms: ["viaplay"] },
+  { label: "Showtime",     color: "#B22222", terms: ["showtime"] },
 ];
 
 function isBookReview(post: WPPost): boolean {
@@ -54,9 +54,9 @@ function groupByMonth(posts: WPPost[]): Array<{ key: string; label: string; post
   return Array.from(map.entries()).map(([key, posts]) => ({ key, label: monthLabel(key), posts }));
 }
 
-function matchesService(post: WPPost, service: string): boolean {
+function matchesService(post: WPPost, terms: string[]): boolean {
   const text = (post.title.rendered + " " + post.excerpt.rendered + " " + post.content.rendered).toLowerCase();
-  return text.includes(service.toLowerCase());
+  return terms.some(t => text.includes(t.toLowerCase()));
 }
 
 export default function Home() {
@@ -73,7 +73,7 @@ export default function Home() {
   }, []);
 
   const filtered = active
-    ? posts.filter(p => matchesService(p, SERVICES.find(s => s.label === active)!.search))
+    ? posts.filter(p => matchesService(p, SERVICES.find(s => s.label === active)!.terms))
     : posts;
 
   const months = groupByMonth(filtered);
