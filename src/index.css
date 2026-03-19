@@ -599,6 +599,8 @@ body {
   .card-list-image { width: 100px; height: 68px; }
   .card-list-date { display: none; }
   .card-list-body p { display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
+  .card-list .card-img-wrap { display: flex; flex-direction: column; }
+  .card-list .service-badge { position: static; margin-top: 4px; align-self: flex-start; }
   .similar-grid { grid-template-columns: 1fr; }
 }
 
