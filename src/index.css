@@ -106,6 +106,40 @@ body {
 .service-btn:hover { opacity: 1; }
 .service-btn.active { opacity: 1; transform: scale(1.05); outline: 2px solid white; }
 
+/* Month filters */
+.month-filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 40px;
+}
+.month-btn {
+  border: 1px solid #ccc;
+  background: var(--white);
+  color: var(--text);
+  font-family: 'Open Sans', sans-serif;
+  font-size: 0.8rem;
+  padding: 6px 14px;
+  cursor: pointer;
+  border-radius: 2px;
+  transition: background 0.2s, color 0.2s;
+}
+.month-btn:hover { background: var(--dark); color: var(--white); border-color: var(--dark); }
+.month-btn.active { background: var(--dark); color: var(--white); border-color: var(--dark); }
+
+/* Month section */
+.month-section { margin-bottom: 56px; }
+.month-heading {
+  font-family: 'Roboto Condensed', sans-serif;
+  font-size: 1.3rem;
+  font-weight: 700;
+  text-transform: capitalize;
+  color: var(--dark);
+  border-bottom: 2px solid var(--blue);
+  padding-bottom: 8px;
+  margin-bottom: 24px;
+}
+
 /* Grid */
 .grid {
   display: grid;
@@ -126,7 +160,7 @@ body {
 .card:hover { box-shadow: 0 4px 20px rgba(0,0,0,0.12); }
 .card-image { width: 100%; aspect-ratio: 16/9; object-fit: cover; display: block; }
 .card-body { padding: 16px; }
-.card-body h2 {
+.card-body h3 {
   font-family: 'Roboto Condensed', sans-serif;
   font-size: 1.1rem;
   font-weight: 700;

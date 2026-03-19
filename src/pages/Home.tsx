@@ -20,8 +20,38 @@ function isBookReview(post: WPPost): boolean {
 }
 
 async function fetchAll(): Promise<WPPost[]> {
-  const posts = await wpFetch<WPPost[]>(`${BASE}?categories=1&per_page=100&_embed`);
-  return posts.filter(p => !isBookReview(p));
+  let page = 1;
+  const all: WPPost[] = [];
+  while (true) {
+    const batch = await wpFetch<WPPost[]>(
+      `${BASE}?categories=1&per_page=100&page=${page}&_embed`
+    );
+    if (!batch.length) break;
+    all.push(...batch);
+    if (batch.length < 100) break;
+    page++;
+  }
+  return all.filter(p => !isBookReview(p));
+}
+
+function monthKey(date: string) {
+  const d = new Date(date);
+  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}`;
+}
+
+function monthLabel(key: string) {
+  const [year, month] = key.split("-");
+  return new Date(Number(year), Number(month) - 1).toLocaleString("sv-SE", { month: "long", year: "numeric" });
+}
+
+function groupByMonth(posts: WPPost[]): Array<{ key: string; label: string; posts: WPPost[] }> {
+  const map = new Map<string, WPPost[]>();
+  for (const post of posts) {
+    const key = monthKey(post.date);
+    if (!map.has(key)) map.set(key, []);
+    map.get(key)!.push(post);
+  }
+  return Array.from(map.entries()).map(([key, posts]) => ({ key, label: monthLabel(key), posts }));
 }
 
 function matchesService(post: WPPost, service: string): boolean {
@@ -33,6 +63,7 @@ export default function Home() {
   const [posts, setPosts] = useState<WPPost[]>([]);
   const [loading, setLoading] = useState(true);
   const [active, setActive] = useState<string | null>(null);
+  const [activeMonth, setActiveMonth] = useState<string | null>(null);
 
   useEffect(() => {
     fetchAll().then((data) => {
@@ -45,7 +76,12 @@ export default function Home() {
     ? posts.filter(p => matchesService(p, SERVICES.find(s => s.label === active)!.search))
     : posts;
 
-  const [hero, ...rest] = filtered;
+  const months = groupByMonth(filtered);
+  const hero = filtered[0];
+
+  const visibleMonths = activeMonth
+    ? months.filter(m => m.key === activeMonth)
+    : months;
 
   return (
     <>
@@ -57,7 +93,9 @@ export default function Home() {
 
       <header className="site-header">
         <div className="container">
-          <a href="https://midcent.se" className="logo"><img src="https://midcent.se/wp-content/uploads/New-Midcent-Logo-135.webp" alt="Midcent" className="logo-img" /></a>
+          <a href="https://midcent.se" className="logo">
+            <img src="https://midcent.se/wp-content/uploads/New-Midcent-Logo-135.webp" alt="Midcent" className="logo-img" />
+          </a>
           <nav>
             <a href="https://midcent.se/underhallning">Underhållning</a>
             <a href="https://midcent.se">Till sajten</a>
@@ -108,20 +146,43 @@ export default function Home() {
             ))}
           </div>
 
-          <div className="grid">
-            {rest.map((post) => {
-              const image = post._embedded?.["wp:featuredmedia"]?.[0]?.source_url;
-              return (
-                <Link to={`/${post.slug}`} key={post.id} className="card">
-                  {image && <img src={image} alt={post._embedded?.["wp:featuredmedia"]?.[0]?.alt_text} className="card-image" />}
-                  <div className="card-body">
-                    <h2 dangerouslySetInnerHTML={{ __html: post.title.rendered }} />
-                    <p dangerouslySetInnerHTML={{ __html: post.excerpt.rendered }} />
-                  </div>
-                </Link>
-              );
-            })}
+          <div className="month-filters">
+            <button
+              className={`month-btn${activeMonth === null ? " active" : ""}`}
+              onClick={() => setActiveMonth(null)}
+            >
+              Alla månader
+            </button>
+            {months.map(m => (
+              <button
+                key={m.key}
+                className={`month-btn${activeMonth === m.key ? " active" : ""}`}
+                onClick={() => setActiveMonth(activeMonth === m.key ? null : m.key)}
+              >
+                {m.label}
+              </button>
+            ))}
           </div>
+
+          {visibleMonths.map(({ key, label, posts: monthPosts }) => (
+            <div key={key} className="month-section">
+              <h2 className="month-heading">{label}</h2>
+              <div className="grid">
+                {monthPosts.map((post) => {
+                  const image = post._embedded?.["wp:featuredmedia"]?.[0]?.source_url;
+                  return (
+                    <Link to={`/${post.slug}`} key={post.id} className="card">
+                      {image && <img src={image} alt={post._embedded?.["wp:featuredmedia"]?.[0]?.alt_text} className="card-image" />}
+                      <div className="card-body">
+                        <h3 dangerouslySetInnerHTML={{ __html: post.title.rendered }} />
+                        <p dangerouslySetInnerHTML={{ __html: post.excerpt.rendered }} />
+                      </div>
+                    </Link>
+                  );
+                })}
+              </div>
+            </div>
+          ))}
         </div>
       </main>
 
