@@ -35,7 +35,7 @@ body {
 .site-header { background: var(--dark); }
 .header-top { padding: 14px 0; border-bottom: 1px solid rgba(255,255,255,0.08); }
 .header-top-inner { display: flex; align-items: center; justify-content: space-between; }
-.logo { text-decoration: none; }
+.logo { text-decoration: none; flex-shrink: 0; }
 .logo-img { height: 36px; width: auto; display: block; }
 .header-top-right { display: flex; align-items: center; gap: 16px; }
 
@@ -97,6 +97,18 @@ body {
   transition: color 0.2s, background 0.2s;
 }
 .nav-list li a:hover { color: #fff; background: rgba(255,255,255,0.06); }
+
+/* Desktop nav — inline with logo */
+@media (min-width: 769px) {
+  .site-header { display: flex; align-items: stretch; border-bottom: 1px solid rgba(255,255,255,0.08); }
+  .header-top { border-bottom: none; padding: 0; flex-shrink: 0; }
+  .header-top-inner { height: 100%; padding-right: 24px; }
+  .streaming-btn { display: none; }
+  .site-nav { flex: 1; overflow: visible; max-height: none !important; }
+  .site-nav > .container { height: 100%; display: flex; align-items: center; padding-left: 0; }
+  .nav-list { flex-wrap: nowrap; align-items: center; height: 100%; }
+  .nav-list li a { padding: 0 12px; font-size: 0.74rem; white-space: nowrap; }
+}
 
 /* Mobile nav */
 @media (max-width: 768px) {
