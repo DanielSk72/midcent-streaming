@@ -64,6 +64,10 @@ function matchesService(post: WPPost, terms: string[]): boolean {
   return terms.some(t => text.includes(t.toLowerCase()));
 }
 
+function formatDate(date: string) {
+  return new Date(date).toLocaleDateString("sv-SE", { day: "numeric", month: "short", year: "numeric" });
+}
+
 export default function Home() {
   const [posts, setPosts] = useState<WPPost[]>([]);
   const [loading, setLoading] = useState(true);
@@ -94,8 +98,12 @@ export default function Home() {
     : posts;
 
   const timePosts = filterByTime(filtered, activeMonth ?? "alla");
-  const hero = timePosts[0];
-  const rest = timePosts.slice(1);
+
+  const hero       = timePosts[0];
+  const topStories = timePosts.slice(1, 3);
+  const latest     = timePosts.slice(3, 6);
+  const listItems  = timePosts.slice(6, 10);
+  const overflow   = timePosts.slice(10);
 
   return (
     <>
@@ -161,20 +169,90 @@ export default function Home() {
             ))}
           </div>
 
-          <div className="grid">
-            {rest.map((post) => {
-              const image = post._embedded?.["wp:featuredmedia"]?.[0]?.source_url;
-              return (
-                <Link to={`/${post.slug}`} key={post.id} className="card">
-                  {image && <img src={image} alt={post._embedded?.["wp:featuredmedia"]?.[0]?.alt_text} className="card-image" loading="lazy" />}
-                  <div className="card-body">
-                    <h3 dangerouslySetInnerHTML={{ __html: post.title.rendered }} />
-                    <p dangerouslySetInnerHTML={{ __html: post.excerpt.rendered }} />
-                  </div>
-                </Link>
-              );
-            })}
-          </div>
+          {/* Zone 1 — Topphistorier */}
+          {topStories.length > 0 && (
+            <section className="zone">
+              <p className="section-heading">Topphistorier</p>
+              <div className="top-stories">
+                {topStories.map(post => {
+                  const image = post._embedded?.["wp:featuredmedia"]?.[0]?.source_url;
+                  return (
+                    <Link to={`/${post.slug}`} key={post.id} className="card-large">
+                      {image && <img src={image} alt={post._embedded?.["wp:featuredmedia"]?.[0]?.alt_text} className="card-image" loading="lazy" />}
+                      <div className="card-body">
+                        <h3 dangerouslySetInnerHTML={{ __html: post.title.rendered }} />
+                        <p dangerouslySetInnerHTML={{ __html: post.excerpt.rendered }} />
+                      </div>
+                    </Link>
+                  );
+                })}
+              </div>
+            </section>
+          )}
+
+          {/* Zone 2 — Senaste */}
+          {latest.length > 0 && (
+            <section className="zone">
+              <p className="section-heading">Senaste</p>
+              <div className="latest-grid">
+                {latest.map(post => {
+                  const image = post._embedded?.["wp:featuredmedia"]?.[0]?.source_url;
+                  return (
+                    <Link to={`/${post.slug}`} key={post.id} className="card">
+                      {image && <img src={image} alt={post._embedded?.["wp:featuredmedia"]?.[0]?.alt_text} className="card-image" loading="lazy" />}
+                      <div className="card-body">
+                        <h3 dangerouslySetInnerHTML={{ __html: post.title.rendered }} />
+                        <p dangerouslySetInnerHTML={{ __html: post.excerpt.rendered }} />
+                      </div>
+                    </Link>
+                  );
+                })}
+              </div>
+            </section>
+          )}
+
+          {/* Zone 3 — Fler nyheter (horizontal list) */}
+          {listItems.length > 0 && (
+            <section className="zone">
+              <p className="section-heading">Fler nyheter</p>
+              <div className="list-cards">
+                {listItems.map(post => {
+                  const image = post._embedded?.["wp:featuredmedia"]?.[0]?.source_url;
+                  return (
+                    <Link to={`/${post.slug}`} key={post.id} className="card-list">
+                      {image && <img src={image} alt={post._embedded?.["wp:featuredmedia"]?.[0]?.alt_text} className="card-list-image" loading="lazy" />}
+                      <div className="card-list-body">
+                        <span className="card-list-date">{formatDate(post.date)}</span>
+                        <h3 dangerouslySetInnerHTML={{ __html: post.title.rendered }} />
+                        <p dangerouslySetInnerHTML={{ __html: post.excerpt.rendered }} />
+                      </div>
+                    </Link>
+                  );
+                })}
+              </div>
+            </section>
+          )}
+
+          {/* Zone 4 — Arkiv */}
+          {overflow.length > 0 && (
+            <section className="zone">
+              <p className="section-heading">Arkiv</p>
+              <div className="grid">
+                {overflow.map(post => {
+                  const image = post._embedded?.["wp:featuredmedia"]?.[0]?.source_url;
+                  return (
+                    <Link to={`/${post.slug}`} key={post.id} className="card">
+                      {image && <img src={image} alt={post._embedded?.["wp:featuredmedia"]?.[0]?.alt_text} className="card-image" loading="lazy" />}
+                      <div className="card-body">
+                        <h3 dangerouslySetInnerHTML={{ __html: post.title.rendered }} />
+                        <p dangerouslySetInnerHTML={{ __html: post.excerpt.rendered }} />
+                      </div>
+                    </Link>
+                  );
+                })}
+              </div>
+            </section>
+          )}
         </div>
       </main>
 
