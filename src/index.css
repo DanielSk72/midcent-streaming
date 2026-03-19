@@ -597,7 +597,8 @@ body {
   .latest-grid { grid-template-columns: 1fr; }
   .card-list { grid-template-columns: 100px 1fr; gap: 12px; }
   .card-list-image { width: 100px; height: 68px; }
-  .card-list-body p { display: none; }
+  .card-list-date { display: none; }
+  .card-list-body p { display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
   .similar-grid { grid-template-columns: 1fr; }
 }
 
