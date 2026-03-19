@@ -35,7 +35,7 @@ export default function PostPage() {
         <meta property="og:description" content={plainExcerpt} />
         <meta property="og:type" content="article" />
         {image && <meta property="og:image" content={image} />}
-        <link rel="canonical" href={`https://midcent.se/${slug}`} />
+        <link rel="canonical" href={`https://streaming.midcent.se/${slug}`} />
       </Helmet>
 
       <header className="site-header">

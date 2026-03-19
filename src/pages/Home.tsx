@@ -24,7 +24,7 @@ export default function Home() {
       <Helmet>
         <title>Streaming — Midcent</title>
         <meta name="description" content="Bästa tips om film, serier och streaming för dig som vet vad du vill se." />
-        <link rel="canonical" href="https://streaming.midcent.se/" />
+        <link rel="canonical" href="https://streaming.midcent.se" />
       </Helmet>
 
       <header className="site-header">
