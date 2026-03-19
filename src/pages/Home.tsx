@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import { Helmet } from "react-helmet-async";
 import { wpFetch } from "../lib/wpCache";
 import type { WPPost } from "../types/wordpress";
+import Header from "../components/Header";
 
 const BASE = "https://midcent.se/wp-json/wp/v2/posts";
 const SERVICES = [
@@ -102,17 +103,7 @@ export default function Home() {
         <link rel="canonical" href="https://streaming.midcent.se" />
       </Helmet>
 
-      <header className="site-header">
-        <div className="container">
-          <a href="https://midcent.se" className="logo">
-            <img src="https://midcent.se/wp-content/uploads/New-Midcent-Logo-135.webp" alt="Midcent" className="logo-img" />
-          </a>
-          <nav>
-            <a href="https://midcent.se/underhallning">Underhållning</a>
-            <a href="https://midcent.se">Till sajten</a>
-          </nav>
-        </div>
-      </header>
+      <Header />
 
       <main>
         {loading && <div className="loading">Laddar...</div>}

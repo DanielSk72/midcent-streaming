@@ -3,6 +3,7 @@ import { useParams, Link } from "react-router-dom";
 import { Helmet } from "react-helmet-async";
 import { wpFetch } from "../lib/wpCache";
 import type { WPPost } from "../types/wordpress";
+import Header from "../components/Header";
 
 const RELATED_API = "https://midcent.se/wp-json/wp/v2/posts?per_page=8&_embed";
 
@@ -43,17 +44,7 @@ export default function PostPage() {
         <link rel="canonical" href={`https://streaming.midcent.se/${slug}`} />
       </Helmet>
 
-      <header className="site-header">
-        <div className="container">
-          <a href="https://midcent.se" className="logo">
-            <img src="https://midcent.se/wp-content/uploads/New-Midcent-Logo-135.webp" alt="Midcent" className="logo-img" />
-          </a>
-          <nav>
-            <a href="https://midcent.se/underhallning">Underhållning</a>
-            <a href="https://midcent.se">Till sajten</a>
-          </nav>
-        </div>
-      </header>
+      <Header />
 
       <main className="post-layout container">
         <article className="post-main">

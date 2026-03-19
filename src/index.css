@@ -18,24 +18,33 @@ body {
 }
 
 /* Header */
-.site-header { background: var(--dark); padding: 16px 0; }
-.site-header .container {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-}
+.site-header { background: var(--dark); }
+.header-top { padding: 14px 0; border-bottom: 1px solid rgba(255,255,255,0.08); }
+.header-top-inner { display: flex; align-items: center; }
 .logo { text-decoration: none; }
 .logo-img { height: 36px; width: auto; display: block; }
-.site-header nav { display: flex; gap: 24px; }
-.site-header nav a {
+
+/* Nav bar */
+.site-nav { background: var(--dark); }
+.nav-list {
+  list-style: none;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0;
+  margin: 0;
+  padding: 0;
+}
+.nav-list li a {
+  display: block;
   color: #ccc;
   text-decoration: none;
-  font-size: 0.85rem;
+  font-size: 0.78rem;
   text-transform: uppercase;
-  letter-spacing: 0.05em;
-  transition: color 0.2s;
+  letter-spacing: 0.06em;
+  padding: 12px 16px;
+  transition: color 0.2s, background 0.2s;
 }
-.site-header nav a:hover { color: var(--white); }
+.nav-list li a:hover { color: var(--white); background: rgba(255,255,255,0.06); }
 
 /* Container */
 .container { max-width: 1200px; margin: 0 auto; padding: 0 24px; }
