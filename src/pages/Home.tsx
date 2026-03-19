@@ -1,5 +1,4 @@
 import { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
 import { Helmet } from "react-helmet-async";
 import { wpFetch, wpFetchPaged, wpGetCached } from "../lib/wpCache";
 import type { WPPost } from "../types/wordpress";
@@ -119,7 +118,7 @@ export default function Home() {
 
         {hero && (
           <section className="hero">
-            <Link to={`/${hero.slug}`}>
+            <a href={hero.link}>
               {hero._embedded?.["wp:featuredmedia"]?.[0]?.source_url && (
                 <img
                   src={hero._embedded["wp:featuredmedia"][0].source_url}
@@ -133,7 +132,7 @@ export default function Home() {
                 <h1 dangerouslySetInnerHTML={{ __html: hero.title.rendered }} />
                 <p dangerouslySetInnerHTML={{ __html: hero.excerpt.rendered }} />
               </div>
-            </Link>
+            </a>
           </section>
         )}
 
@@ -180,7 +179,7 @@ export default function Home() {
                   const image = post._embedded?.["wp:featuredmedia"]?.[0]?.source_url;
                   const service = detectService(post);
                   return (
-                    <Link to={`/${post.slug}`} key={post.id} className="card-large">
+                    <a href={post.link} key={post.id} className="card-large">
                       <div className="card-img-wrap">
                         {image && <img src={image} alt={post._embedded?.["wp:featuredmedia"]?.[0]?.alt_text} className="card-image" loading="lazy" />}
                         {service && <span className="service-badge" style={{ background: service.color }}>{service.label}</span>}
@@ -189,7 +188,7 @@ export default function Home() {
                         <h3 dangerouslySetInnerHTML={{ __html: post.title.rendered }} />
                         <p dangerouslySetInnerHTML={{ __html: post.excerpt.rendered }} />
                       </div>
-                    </Link>
+                    </a>
                   );
                 })}
               </div>
@@ -204,7 +203,7 @@ export default function Home() {
                   const image = post._embedded?.["wp:featuredmedia"]?.[0]?.source_url;
                   const service = detectService(post);
                   return (
-                    <Link to={`/${post.slug}`} key={post.id} className="card">
+                    <a href={post.link} key={post.id} className="card">
                       <div className="card-img-wrap">
                         {image && <img src={image} alt={post._embedded?.["wp:featuredmedia"]?.[0]?.alt_text} className="card-image" loading="lazy" />}
                         {service && <span className="service-badge" style={{ background: service.color }}>{service.label}</span>}
@@ -213,7 +212,7 @@ export default function Home() {
                         <h3 dangerouslySetInnerHTML={{ __html: post.title.rendered }} />
                         <p dangerouslySetInnerHTML={{ __html: post.excerpt.rendered }} />
                       </div>
-                    </Link>
+                    </a>
                   );
                 })}
               </div>
@@ -228,7 +227,7 @@ export default function Home() {
                   const image = post._embedded?.["wp:featuredmedia"]?.[0]?.source_url;
                   const service = detectService(post);
                   return (
-                    <Link to={`/${post.slug}`} key={post.id} className="card-list">
+                    <a href={post.link} key={post.id} className="card-list">
                       <div className="card-img-wrap">
                         {image && <img src={image} alt={post._embedded?.["wp:featuredmedia"]?.[0]?.alt_text} className="card-list-image" loading="lazy" />}
                         {service && <span className="service-badge" style={{ background: service.color }}>{service.label}</span>}
@@ -238,7 +237,7 @@ export default function Home() {
                         <h3 dangerouslySetInnerHTML={{ __html: post.title.rendered }} />
                         <p dangerouslySetInnerHTML={{ __html: post.excerpt.rendered }} />
                       </div>
-                    </Link>
+                    </a>
                   );
                 })}
               </div>
@@ -253,7 +252,7 @@ export default function Home() {
                   const image = post._embedded?.["wp:featuredmedia"]?.[0]?.source_url;
                   const service = detectService(post);
                   return (
-                    <Link to={`/${post.slug}`} key={post.id} className="card">
+                    <a href={post.link} key={post.id} className="card">
                       <div className="card-img-wrap">
                         {image && <img src={image} alt={post._embedded?.["wp:featuredmedia"]?.[0]?.alt_text} className="card-image" loading="lazy" />}
                         {service && <span className="service-badge" style={{ background: service.color }}>{service.label}</span>}
@@ -262,7 +261,7 @@ export default function Home() {
                         <h3 dangerouslySetInnerHTML={{ __html: post.title.rendered }} />
                         <p dangerouslySetInnerHTML={{ __html: post.excerpt.rendered }} />
                       </div>
-                    </Link>
+                    </a>
                   );
                 })}
               </div>
