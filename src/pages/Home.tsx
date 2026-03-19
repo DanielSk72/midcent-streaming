@@ -16,17 +16,7 @@ const SERVICES = [
 ];
 
 async function fetchAll(): Promise<WPPost[]> {
-  const requests = [
-    wpFetch<WPPost[]>(`${BASE}?categories=5613,5614&per_page=100&_embed`),
-    ...SERVICES.map(s =>
-      wpFetch<WPPost[]>(`${BASE}?search=${encodeURIComponent(s.search)}&per_page=50&_embed`)
-    ),
-  ];
-  const results = await Promise.all(requests);
-  const all = results.flat();
-  // Deduplicate by id, preserve order
-  const seen = new Set<number>();
-  return all.filter(p => seen.has(p.id) ? false : seen.add(p.id) && true);
+  return wpFetch<WPPost[]>(`${BASE}?categories=1&per_page=100&_embed`);
 }
 
 function matchesService(post: WPPost, service: string): boolean {
