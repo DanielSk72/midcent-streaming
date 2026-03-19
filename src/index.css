@@ -24,15 +24,8 @@ body {
   align-items: center;
   justify-content: space-between;
 }
-.logo {
-  font-family: 'Roboto Condensed', sans-serif;
-  font-size: 1.6rem;
-  font-weight: 700;
-  color: var(--white);
-  text-decoration: none;
-  letter-spacing: 0.05em;
-  text-transform: uppercase;
-}
+.logo { text-decoration: none; }
+.logo-img { height: 36px; width: auto; display: block; }
 .site-header nav { display: flex; gap: 24px; }
 .site-header nav a {
   color: #ccc;

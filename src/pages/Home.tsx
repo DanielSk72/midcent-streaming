@@ -62,7 +62,7 @@ export default function Home() {
 
       <header className="site-header">
         <div className="container">
-          <a href="https://midcent.se" className="logo">Midcent</a>
+          <a href="https://midcent.se" className="logo"><img src="https://midcent.se/wp-content/uploads/New-Midcent-Logo-135.webp" alt="Midcent" className="logo-img" /></a>
           <nav>
             <a href="https://midcent.se/underhallning">Underhållning</a>
             <a href="https://midcent.se">Till sajten</a>
