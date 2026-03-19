@@ -102,12 +102,12 @@ body {
 @media (min-width: 769px) {
   .site-header { display: flex; align-items: stretch; border-bottom: 1px solid rgba(255,255,255,0.08); }
   .header-top { border-bottom: none; padding: 0; flex-shrink: 0; }
-  .header-top-inner { height: 100%; padding-right: 24px; }
+  .header-top-inner { height: 100%; padding-right: 24px; padding-top: 12px; padding-bottom: 12px; }
   .streaming-btn { display: none; }
   .site-nav { flex: 1; overflow: visible; max-height: none !important; }
   .site-nav > .container { height: 100%; display: flex; align-items: center; padding-left: 0; }
   .nav-list { flex-wrap: nowrap; align-items: center; height: 100%; }
-  .nav-list li a { padding: 0 12px; font-size: 0.74rem; white-space: nowrap; }
+  .nav-list li a { padding: 12px 12px; font-size: 0.74rem; white-space: nowrap; }
 }
 
 /* Mobile nav */
