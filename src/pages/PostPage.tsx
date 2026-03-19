@@ -4,7 +4,7 @@ import { Helmet } from "react-helmet-async";
 import { wpFetch } from "../lib/wpCache";
 import type { WPPost } from "../types/wordpress";
 
-const RELATED_API = "https://midcent.se/wp-json/wp/v2/posts?per_page=8&_embed&_fields=id,slug,link,title,excerpt,_embedded";
+const RELATED_API = "https://midcent.se/wp-json/wp/v2/posts?per_page=8&_embed";
 
 export default function PostPage() {
   const { slug } = useParams<{ slug: string }>();
