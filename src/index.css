@@ -365,6 +365,8 @@ body {
   line-height: 1.7;
 }
 .post-body blockquote p { margin: 0; color: #fff; }
+.post-body a { color: var(--dark); text-decoration: underline; text-underline-offset: 3px; }
+.post-body a:hover { opacity: 0.7; }
 .read-more {
   display: inline-flex;
   align-items: center;
@@ -389,14 +391,14 @@ body {
   content: '';
   position: absolute;
   inset: 0;
-  background: var(--blue);
+  background: var(--dark);
   transform: scaleX(0);
   transform-origin: left;
   transition: transform 0.3s ease;
   z-index: 0;
 }
 .read-more:hover::before { transform: scaleX(1); }
-.read-more:hover { color: #fff; border-color: var(--blue); }
+.read-more:hover { color: #fff; border-color: var(--dark); }
 .read-more span, .read-more svg { position: relative; z-index: 1; }
 .read-more svg {
   width: 16px;
