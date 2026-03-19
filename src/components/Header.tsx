@@ -16,14 +16,10 @@ export default function Header() {
   const [open, setOpen] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
   const [query, setQuery] = useState("");
-  const mobileInputRef = useRef<HTMLInputElement>(null);
-  const desktopInputRef = useRef<HTMLInputElement>(null);
+  const searchInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
-    if (searchOpen) {
-      mobileInputRef.current?.focus();
-      desktopInputRef.current?.focus();
-    }
+    if (searchOpen) searchInputRef.current?.focus();
   }, [searchOpen]);
 
   function handleSearch(e: { preventDefault(): void }) {
@@ -45,30 +41,47 @@ export default function Header() {
             <img src="https://midcent.se/wp-content/uploads/New-Midcent-Logo-135.webp" alt="Midcent" className="logo-img" />
           </a>
           <a href="https://streaming.midcent.se" className="streaming-btn">Streaming</a>
-          <div className={`nav-search mobile-search${searchOpen ? " nav-search--open" : ""}`}>
-            <form onSubmit={handleSearch} className="nav-search-form">
-              <input
-                ref={mobileInputRef}
-                className="nav-search-input"
-                type="search"
-                placeholder="Sök på Midcent…"
-                value={query}
-                onChange={e => setQuery(e.target.value)}
-                onKeyDown={e => e.key === "Escape" && setSearchOpen(false)}
-              />
-            </form>
-            <button
-              className="nav-search-btn"
-              onClick={() => setSearchOpen(o => !o)}
-              aria-label="Sök"
-            >
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+          {/* Search toggle button — top right, shows X when open */}
+          <button
+            className="nav-search-btn"
+            onClick={() => { setSearchOpen(o => !o); setQuery(""); }}
+            aria-label="Sök"
+          >
+            {searchOpen ? (
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+              </svg>
+            ) : (
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+              </svg>
+            )}
+          </button>
+        </div>
+      </div>
+
+      {/* Search dropdown panel — full width, below header bar */}
+      {searchOpen && (
+        <div className="search-dropdown">
+          <form onSubmit={handleSearch} className="search-dropdown-form">
+            <input
+              ref={searchInputRef}
+              className="search-dropdown-input"
+              type="search"
+              placeholder="Sök Midcent .."
+              value={query}
+              onChange={e => setQuery(e.target.value)}
+              onKeyDown={e => e.key === "Escape" && setSearchOpen(false)}
+            />
+            <button type="submit" className="search-dropdown-submit" aria-label="Sök">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                 <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
               </svg>
             </button>
-          </div>
+          </form>
         </div>
-      </div>
+      )}
+
       <nav className={`site-nav${open ? " nav-open" : ""}`}>
         <div className="container nav-inner">
           <ul className="nav-list">
@@ -78,10 +91,10 @@ export default function Header() {
               </li>
             ))}
           </ul>
+          {/* Desktop search in nav bar */}
           <div className={`nav-search desktop-search${searchOpen ? " nav-search--open" : ""}`}>
             <form onSubmit={handleSearch} className="nav-search-form">
               <input
-                ref={desktopInputRef}
                 className="nav-search-input"
                 type="search"
                 placeholder="Sök på Midcent…"
@@ -90,15 +103,6 @@ export default function Header() {
                 onKeyDown={e => e.key === "Escape" && setSearchOpen(false)}
               />
             </form>
-            <button
-              className="nav-search-btn"
-              onClick={() => setSearchOpen(o => !o)}
-              aria-label="Sök"
-            >
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
-              </svg>
-            </button>
           </div>
         </div>
       </nav>
