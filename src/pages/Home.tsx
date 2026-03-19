@@ -15,8 +15,15 @@ const SERVICES = [
   { label: "Showtime",     color: "#B22222", search: "showtime" },
 ];
 
+function isBookReview(post: WPPost): boolean {
+  const text = (post.title.rendered + " " + post.excerpt.rendered).toLowerCase();
+  const tags = (post._embedded?.["wp:term"]?.[1] ?? []) as Array<{ slug: string }>;
+  return tags.some(t => t.slug === "bokrecension") || text.includes("bokrecension");
+}
+
 async function fetchAll(): Promise<WPPost[]> {
-  return wpFetch<WPPost[]>(`${BASE}?categories=1&per_page=100&_embed`);
+  const posts = await wpFetch<WPPost[]>(`${BASE}?categories=1&per_page=100&_embed`);
+  return posts.filter(p => !isBookReview(p));
 }
 
 function matchesService(post: WPPost, service: string): boolean {
