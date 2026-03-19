@@ -71,7 +71,7 @@ export default function PostPage() {
       <main className="post-layout container">
         <article className="post-main">
           <Link to="/" className="back">← Streaming</Link>
-          {image && <img src={image} alt={plainTitle} className="post-image" />}
+          {image && <img src={image} alt={plainTitle} className="post-image" fetchPriority="high" />}
           <h1 dangerouslySetInnerHTML={{ __html: post.title.rendered }} />
           <div className="post-body" dangerouslySetInnerHTML={{ __html: post.content.rendered }} />
           <a href={post.link} className="read-more" target="_blank" rel="noopener noreferrer">
@@ -86,7 +86,7 @@ export default function PostPage() {
                   const img = p._embedded?.["wp:featuredmedia"]?.[0]?.source_url;
                   return (
                     <Link to={`/${p.slug}`} key={p.id} className="similar-card">
-                      {img && <img src={img} alt={p.title.rendered.replace(/<[^>]+>/g, "")} className="similar-img" />}
+                      {img && <img src={img} alt={p.title.rendered.replace(/<[^>]+>/g, "")} className="similar-img" loading="lazy" />}
                       <div className="similar-body">
                         <h3 dangerouslySetInnerHTML={{ __html: p.title.rendered }} />
                         <p dangerouslySetInnerHTML={{ __html: p.excerpt.rendered }} />
@@ -106,7 +106,7 @@ export default function PostPage() {
               const img = p._embedded?.["wp:featuredmedia"]?.[0]?.source_url;
               return (
                 <a key={p.id} href={p.link} className="sidebar-card" target="_blank" rel="noopener noreferrer">
-                  {img && <img src={img} alt={p.title.rendered.replace(/<[^>]+>/g, "")} className="sidebar-img" />}
+                  {img && <img src={img} alt={p.title.rendered.replace(/<[^>]+>/g, "")} className="sidebar-img" loading="lazy" />}
                   <div className="sidebar-card-body">
                     <span dangerouslySetInnerHTML={{ __html: p.title.rendered }} />
                     <p dangerouslySetInnerHTML={{ __html: p.excerpt.rendered }} />

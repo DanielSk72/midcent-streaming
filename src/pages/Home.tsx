@@ -116,6 +116,7 @@ export default function Home() {
                   src={hero._embedded["wp:featuredmedia"][0].source_url}
                   alt={hero._embedded["wp:featuredmedia"][0].alt_text}
                   className="hero-image"
+                  fetchPriority="high"
                 />
               )}
               <div className="hero-overlay">
@@ -163,7 +164,7 @@ export default function Home() {
               const image = post._embedded?.["wp:featuredmedia"]?.[0]?.source_url;
               return (
                 <Link to={`/${post.slug}`} key={post.id} className="card">
-                  {image && <img src={image} alt={post._embedded?.["wp:featuredmedia"]?.[0]?.alt_text} className="card-image" />}
+                  {image && <img src={image} alt={post._embedded?.["wp:featuredmedia"]?.[0]?.alt_text} className="card-image" loading="lazy" />}
                   <div className="card-body">
                     <h3 dangerouslySetInnerHTML={{ __html: post.title.rendered }} />
                     <p dangerouslySetInnerHTML={{ __html: post.excerpt.rendered }} />
