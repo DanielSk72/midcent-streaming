@@ -5,6 +5,7 @@ export interface WPPost {
   title: { rendered: string };
   excerpt: { rendered: string };
   content: { rendered: string };
+  class_list?: string[];
   _embedded?: {
     "wp:featuredmedia"?: Array<{ source_url: string; alt_text: string }>;
     author?: Array<{ name: string }>;

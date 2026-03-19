@@ -16,9 +16,7 @@ const SERVICES = [
 ];
 
 function isBookReview(post: WPPost): boolean {
-  const text = (post.title.rendered + " " + post.excerpt.rendered).toLowerCase();
-  const tags = (post._embedded?.["wp:term"]?.[1] ?? []) as Array<{ slug: string }>;
-  return tags.some(t => t.slug === "bokrecension") || text.includes("bokrecension");
+  return post.class_list?.includes("tag-bokrecension") ?? false;
 }
 
 async function fetchAll(): Promise<WPPost[]> {
