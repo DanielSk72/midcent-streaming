@@ -76,7 +76,10 @@ export default function PostPage() {
           <h1 dangerouslySetInnerHTML={{ __html: post.title.rendered }} />
           <div className="post-body" dangerouslySetInnerHTML={{ __html: post.content.rendered }} />
           <a href={post.link} className="read-more" target="_blank" rel="noopener noreferrer">
-            Läs mer på Midcent →
+            <span>Läs mer på Midcent</span>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M5 12h14M12 5l7 7-7 7"/>
+            </svg>
           </a>
 
           {similar.length > 0 && (

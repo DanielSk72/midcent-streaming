@@ -229,16 +229,44 @@ body {
 .post-body p { margin-bottom: 16px; }
 .post-body img { max-width: 100%; height: auto; }
 .read-more {
-  display: inline-block;
-  margin-top: 32px;
-  background: var(--blue);
-  color: var(--white);
-  padding: 12px 24px;
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 40px;
+  padding: 14px 28px;
+  background: transparent;
+  color: var(--text);
+  border: 1.5px solid var(--border);
   text-decoration: none;
+  font-family: 'Roboto Condensed', sans-serif;
   font-size: 0.9rem;
-  transition: background 0.2s;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  border-radius: 2px;
+  position: relative;
+  overflow: hidden;
+  transition: color 0.3s, border-color 0.3s;
 }
-.read-more:hover { background: #1a6a96; }
+.read-more::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: var(--blue);
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 0.3s ease;
+  z-index: 0;
+}
+.read-more:hover::before { transform: scaleX(1); }
+.read-more:hover { color: #fff; border-color: var(--blue); }
+.read-more span, .read-more svg { position: relative; z-index: 1; }
+.read-more svg {
+  width: 16px;
+  height: 16px;
+  transition: transform 0.3s ease;
+}
+.read-more:hover svg { transform: translateX(4px); }
 
 /* Similar posts */
 .similar-posts { margin-top: 48px; border-top: 2px solid var(--blue); padding-top: 24px; }
