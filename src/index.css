@@ -131,6 +131,18 @@ body {
   .site-nav.nav-open { max-height: 600px; }
   .nav-list { flex-direction: column; }
   .nav-list li a { padding: 14px 24px; border-bottom: 1px solid rgba(255,255,255,0.06); font-size: 0.9rem; }
+  .desktop-search { display: none; }
+  .mobile-search { display: flex; align-items: center; gap: 8px; margin-left: auto; }
+  .mobile-search .nav-search-btn { background: none; border: none; cursor: pointer; color: #ccc; padding: 4px; display: flex; align-items: center; transition: color 0.2s; }
+  .mobile-search .nav-search-btn:hover { color: #fff; }
+  .mobile-search .nav-search-form { width: 0; overflow: hidden; transition: width 0.25s ease; }
+  .mobile-search.nav-search--open .nav-search-form { width: 130px; }
+  .mobile-search .nav-search-input { width: 100%; background: rgba(255,255,255,0.1); border: none; border-bottom: 1px solid rgba(255,255,255,0.3); color: #fff; font-size: 0.78rem; padding: 4px 8px; outline: none; font-family: inherit; }
+  .mobile-search .nav-search-input::placeholder { color: rgba(255,255,255,0.4); }
+}
+
+@media (min-width: 769px) {
+  .mobile-search { display: none; }
 }
 
 /* Container */

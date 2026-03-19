@@ -16,10 +16,14 @@ export default function Header() {
   const [open, setOpen] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
   const [query, setQuery] = useState("");
-  const inputRef = useRef<HTMLInputElement>(null);
+  const mobileInputRef = useRef<HTMLInputElement>(null);
+  const desktopInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
-    if (searchOpen) inputRef.current?.focus();
+    if (searchOpen) {
+      mobileInputRef.current?.focus();
+      desktopInputRef.current?.focus();
+    }
   }, [searchOpen]);
 
   function handleSearch(e: { preventDefault(): void }) {
@@ -41,6 +45,28 @@ export default function Header() {
             <img src="https://midcent.se/wp-content/uploads/New-Midcent-Logo-135.webp" alt="Midcent" className="logo-img" />
           </a>
           <a href="https://streaming.midcent.se" className="streaming-btn">Streaming</a>
+          <div className={`nav-search mobile-search${searchOpen ? " nav-search--open" : ""}`}>
+            <form onSubmit={handleSearch} className="nav-search-form">
+              <input
+                ref={mobileInputRef}
+                className="nav-search-input"
+                type="search"
+                placeholder="Sök på Midcent…"
+                value={query}
+                onChange={e => setQuery(e.target.value)}
+                onKeyDown={e => e.key === "Escape" && setSearchOpen(false)}
+              />
+            </form>
+            <button
+              className="nav-search-btn"
+              onClick={() => setSearchOpen(o => !o)}
+              aria-label="Sök"
+            >
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+              </svg>
+            </button>
+          </div>
         </div>
       </div>
       <nav className={`site-nav${open ? " nav-open" : ""}`}>
@@ -52,10 +78,10 @@ export default function Header() {
               </li>
             ))}
           </ul>
-          <div className={`nav-search${searchOpen ? " nav-search--open" : ""}`}>
+          <div className={`nav-search desktop-search${searchOpen ? " nav-search--open" : ""}`}>
             <form onSubmit={handleSearch} className="nav-search-form">
               <input
-                ref={inputRef}
+                ref={desktopInputRef}
                 className="nav-search-input"
                 type="search"
                 placeholder="Sök på Midcent…"
