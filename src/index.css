@@ -100,14 +100,16 @@ body {
 
 /* Desktop nav — inline with logo */
 @media (min-width: 769px) {
-  .site-header { display: flex; align-items: stretch; border-bottom: 1px solid rgba(255,255,255,0.08); }
+  .site-header { display: flex; align-items: stretch; }
   .header-top { border-bottom: none; padding: 0; flex-shrink: 0; }
-  .header-top-inner { height: 100%; padding-right: 24px; padding-top: 12px; padding-bottom: 12px; }
+  .header-top-inner { height: 100%; padding-right: 8px; padding-top: 18px; padding-bottom: 18px; }
+  .logo-img { height: 28px; }
   .streaming-btn { display: none; }
   .site-nav { flex: 1; overflow: visible; max-height: none !important; }
   .site-nav > .container { height: 100%; display: flex; align-items: center; padding-left: 0; }
   .nav-list { flex-wrap: nowrap; align-items: center; height: 100%; }
-  .nav-list li a { padding: 12px 12px; font-size: 0.74rem; white-space: nowrap; }
+  .nav-list li a { padding: 18px 18px; font-size: 0.8rem; letter-spacing: 0.1em; white-space: nowrap; font-family: 'Roboto Condensed', sans-serif; font-weight: 700; color: #d0d0d0; }
+  .nav-list li a:hover { color: #fff; background: transparent; }
 }
 
 /* Mobile nav */
