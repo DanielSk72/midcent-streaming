@@ -102,20 +102,31 @@ body {
 @media (min-width: 769px) {
   .site-header { display: flex; align-items: stretch; }
   .header-top { border-bottom: none; padding: 0; flex-shrink: 0; }
-  .header-top-inner { height: 100%; padding-right: 8px; padding-top: 18px; padding-bottom: 18px; }
-  .logo-img { height: 28px; }
+  .header-top-inner { height: 100%; padding-right: 8px; padding-top: 14px; padding-bottom: 14px; }
+  .logo-img { height: 32px; }
+  .hamburger { display: none; }
   .streaming-btn { display: none; }
   .site-nav { flex: 1; overflow: visible; max-height: none !important; }
-  .site-nav > .container { height: 100%; display: flex; align-items: center; padding-left: 0; }
-  .nav-list { flex-wrap: nowrap; align-items: center; height: 100%; }
-  .nav-list li a { padding: 18px 18px; font-size: 0.8rem; letter-spacing: 0.1em; white-space: nowrap; font-family: 'Roboto Condensed', sans-serif; font-weight: 700; color: #d0d0d0; }
+  .nav-inner { height: 100%; display: flex; align-items: center; padding-left: 0; }
+  .nav-list { flex-wrap: nowrap; align-items: center; height: 100%; flex: 1; }
+  .nav-list li a { padding: 0 16px; height: 100%; display: flex; align-items: center; font-size: 0.78rem; letter-spacing: 0.09em; white-space: nowrap; font-family: 'Roboto Condensed', sans-serif; font-weight: 400; color: #ccc; }
   .nav-list li a:hover { color: #fff; background: transparent; }
+
+  /* Search */
+  .nav-search { display: flex; align-items: center; gap: 8px; position: relative; }
+  .nav-search-btn { background: none; border: none; cursor: pointer; color: #ccc; padding: 4px; display: flex; align-items: center; transition: color 0.2s; }
+  .nav-search-btn:hover { color: #fff; }
+  .nav-search-form { width: 0; overflow: hidden; transition: width 0.25s ease; }
+  .nav-search--open .nav-search-form { width: 180px; }
+  .nav-search-input { width: 100%; background: rgba(255,255,255,0.1); border: none; border-bottom: 1px solid rgba(255,255,255,0.3); color: #fff; font-size: 0.78rem; padding: 4px 8px; outline: none; font-family: inherit; }
+  .nav-search-input::placeholder { color: rgba(255,255,255,0.4); }
 }
 
 /* Mobile nav */
 @media (max-width: 768px) {
   .hamburger { display: flex; }
-  .header-top-inner { flex-direction: row-reverse; }
+  .header-top-inner { justify-content: flex-start; gap: 12px; }
+  .logo { margin-right: auto; }
   .site-nav { max-height: 0; transition: max-height 0.3s ease; }
   .site-nav.nav-open { max-height: 600px; }
   .nav-list { flex-direction: column; }
