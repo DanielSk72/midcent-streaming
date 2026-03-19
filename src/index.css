@@ -589,9 +589,11 @@ body {
 }
 
 @media (max-width: 600px) {
-  .hero-overlay h1 { font-size: 1.6rem; }
-  .hero-image { height: 360px; }
   .hero { max-height: 360px; }
+  .hero-image { height: 360px; }
+  .hero-overlay { padding: 20px; }
+  .hero-overlay h1 { font-size: 1.4rem; margin: 6px 0 0; }
+  .hero-overlay p { display: none; }
   .latest-grid { grid-template-columns: 1fr; }
   .card-list { grid-template-columns: 100px 1fr; gap: 12px; }
   .card-list-image { width: 100px; height: 68px; }
