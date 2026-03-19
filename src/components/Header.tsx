@@ -91,7 +91,7 @@ export default function Header() {
               </li>
             ))}
           </ul>
-          {/* Desktop search in nav bar */}
+          {/* Desktop search — button + expanding input at right end of nav */}
           <div className={`nav-search desktop-search${searchOpen ? " nav-search--open" : ""}`}>
             <form onSubmit={handleSearch} className="nav-search-form">
               <input
@@ -103,6 +103,21 @@ export default function Header() {
                 onKeyDown={e => e.key === "Escape" && setSearchOpen(false)}
               />
             </form>
+            <button
+              className="nav-search-btn"
+              onClick={() => { setSearchOpen(o => !o); setQuery(""); }}
+              aria-label="Sök"
+            >
+              {searchOpen ? (
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+                </svg>
+              ) : (
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+                </svg>
+              )}
+            </button>
           </div>
         </div>
       </nav>
