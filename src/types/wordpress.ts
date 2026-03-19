@@ -10,5 +10,6 @@ export interface WPPost {
   _embedded?: {
     "wp:featuredmedia"?: Array<{ source_url: string; alt_text: string }>;
     author?: Array<{ name: string }>;
+    "wp:term"?: Array<Array<{ id: number; name: string; slug: string }>>;
   };
 }

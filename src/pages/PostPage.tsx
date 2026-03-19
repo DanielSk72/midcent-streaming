@@ -82,6 +82,25 @@ export default function PostPage() {
             </svg>
           </a>
 
+          {(() => {
+            const tags = post._embedded?.["wp:term"]?.[1] ?? [];
+            return tags.length > 0 ? (
+              <div className="post-tags">
+                {tags.map(tag => (
+                  <a
+                    key={tag.id}
+                    href={`https://midcent.se/?s=${encodeURIComponent(tag.name)}`}
+                    className="post-tag"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    {tag.name}
+                  </a>
+                ))}
+              </div>
+            ) : null;
+          })()}
+
           {similar.length > 0 && (
             <section className="similar-posts">
               <h2 className="similar-heading">Liknande artiklar</h2>

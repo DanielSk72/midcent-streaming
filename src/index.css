@@ -406,6 +406,32 @@ body {
 .read-more:hover svg { transform: translateX(4px); }
 
 /* Similar posts */
+.post-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 32px;
+}
+
+.post-tag {
+  font-family: 'Roboto Condensed', sans-serif;
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--blue);
+  border: 1px solid var(--blue);
+  border-radius: 2px;
+  padding: 4px 10px;
+  text-decoration: none;
+  transition: background 0.15s, color 0.15s;
+}
+
+.post-tag:hover {
+  background: var(--blue);
+  color: #fff;
+}
+
 .similar-posts { margin-top: 48px; border-top: 2px solid var(--blue); padding-top: 24px; }
 .similar-heading {
   font-family: 'Roboto Condensed', sans-serif;
