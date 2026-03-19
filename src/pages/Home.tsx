@@ -16,8 +16,10 @@ const SERVICES = [
   { label: "Showtime",     color: "#B22222", terms: ["showtime"] },
 ];
 
-function isBookReview(post: WPPost): boolean {
-  return post.class_list?.includes("tag-bokrecension") ?? false;
+const EXCLUDED_TAGS = ["tag-bokrecension", "tag-ljudbocker", "tag-musikrecension"];
+
+function isExcluded(post: WPPost): boolean {
+  return post.class_list?.some(c => EXCLUDED_TAGS.includes(c)) ?? false;
 }
 
 const LIST_PARAMS = "categories=1&per_page=100&_embed=wp:featuredmedia";
@@ -34,7 +36,7 @@ async function fetchAll(): Promise<WPPost[]> {
       )
     : [];
 
-  return [page1, ...rest].flat().filter(p => !isBookReview(p));
+  return [page1, ...rest].flat().filter(p => !isExcluded(p));
 }
 
 const NOW = Date.now();
@@ -77,7 +79,7 @@ const PAGE1_URL = `${BASE}?${LIST_PARAMS}&page=1`;
 export default function Home() {
   const [posts, setPosts] = useState<WPPost[]>(() => {
     const cached = wpGetCached<WPPost[]>(PAGE1_URL);
-    return cached ? cached.filter(p => !isBookReview(p)) : [];
+    return cached ? cached.filter(p => !isExcluded(p)) : [];
   });
   const [loading, setLoading] = useState(() => !wpGetCached<WPPost[]>(PAGE1_URL));
   const [activeServices, setActiveServices] = useState<Set<string>>(new Set());
