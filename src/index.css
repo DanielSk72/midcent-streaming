@@ -143,14 +143,14 @@ body {
 @media (min-width: 769px) {
   .site-header { display: flex; align-items: stretch; flex-wrap: wrap; }
   .header-top { border-bottom: none; padding: 0; flex-shrink: 0; }
-  .header-top-inner { height: 100%; padding-right: 8px; padding-top: 28px; padding-bottom: 28px; }
+  .header-top-inner { height: 100%; padding-right: 8px; padding-top: 24px; padding-bottom: 24px; min-height: 80px; box-sizing: border-box; }
   .logo-img { height: 32px; }
   .hamburger { display: none; }
   .streaming-btn { display: none; }
   /* Hide the mobile search button on desktop — the nav has its own */
   .header-top-inner .nav-search-btn { display: none; }
   .desktop-search { display: flex; align-items: center; gap: 4px; }
-  .site-nav { flex: 1; overflow: visible; max-height: none !important; }
+  .site-nav { flex: 1; overflow: visible; max-height: none !important; min-height: 80px; }
   .nav-inner { height: 100%; display: flex; align-items: center; padding-left: 0; }
   .nav-list { flex-wrap: nowrap; align-items: center; height: 100%; flex: 1; }
   .nav-list li a { padding: 0 16px; height: 100%; display: flex; align-items: center; font-size: 0.78rem; letter-spacing: 0.09em; white-space: nowrap; font-family: 'Roboto Condensed', sans-serif; font-weight: 400; color: #ccc; }
