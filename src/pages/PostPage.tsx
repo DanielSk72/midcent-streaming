@@ -6,11 +6,30 @@ import type { WPPost } from "../types/wordpress";
 import Header from "../components/Header";
 
 const RELATED_API = "https://midcent.se/wp-json/wp/v2/posts?per_page=8&_embed";
+const SIMILAR_API  = "https://midcent.se/wp-json/wp/v2/posts?categories=1&per_page=50&_embed";
+
+const STOP = new Set(["och", "i", "på", "att", "som", "en", "ett", "är", "av", "med", "den", "det", "de", "för", "till", "om", "men", "han", "hon", "vi", "nu", "från", "the", "a", "an", "of", "in", "to", "and", "is"]);
+
+function score(post: WPPost, words: string[]): number {
+  const text = post.title.rendered.toLowerCase();
+  return words.filter(w => text.includes(w)).length;
+}
+
+function getSimilar(pool: WPPost[], currentSlug: string, title: string): WPPost[] {
+  const words = title.toLowerCase().split(/\s+/).filter(w => w.length > 3 && !STOP.has(w));
+  return pool
+    .filter(p => p.slug !== currentSlug)
+    .map(p => ({ p, s: score(p, words) }))
+    .sort((a, b) => b.s - a.s)
+    .slice(0, 3)
+    .map(x => x.p);
+}
 
 export default function PostPage() {
   const { slug } = useParams<{ slug: string }>();
   const [post, setPost] = useState<WPPost | null>(null);
   const [related, setRelated] = useState<WPPost[]>([]);
+  const [similar, setSimilar] = useState<WPPost[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -18,9 +37,12 @@ export default function PostPage() {
     Promise.all([
       wpFetch<WPPost[]>(`https://midcent.se/wp-json/wp/v2/posts?slug=${slug}&_embed`),
       wpFetch<WPPost[]>(RELATED_API),
-    ]).then(([postData, relatedData]) => {
-      setPost(postData[0] ?? null);
-      setRelated(relatedData.filter(p => p.slug !== slug));
+      wpFetch<WPPost[]>(SIMILAR_API),
+    ]).then(([postData, relatedData, similarPool]) => {
+      const p = postData[0] ?? null;
+      setPost(p);
+      setRelated(relatedData.filter(r => r.slug !== slug));
+      if (p) setSimilar(getSimilar(similarPool, slug, p.title.rendered.replace(/<[^>]+>/g, "")));
       setLoading(false);
     });
   }, [slug]);
@@ -55,6 +77,26 @@ export default function PostPage() {
           <a href={post.link} className="read-more" target="_blank" rel="noopener noreferrer">
             Läs mer på Midcent →
           </a>
+
+          {similar.length > 0 && (
+            <section className="similar-posts">
+              <h2 className="similar-heading">Liknande artiklar</h2>
+              <div className="similar-grid">
+                {similar.map(p => {
+                  const img = p._embedded?.["wp:featuredmedia"]?.[0]?.source_url;
+                  return (
+                    <Link to={`/${p.slug}`} key={p.id} className="similar-card">
+                      {img && <img src={img} alt={p.title.rendered.replace(/<[^>]+>/g, "")} className="similar-img" />}
+                      <div className="similar-body">
+                        <h3 dangerouslySetInnerHTML={{ __html: p.title.rendered }} />
+                        <p dangerouslySetInnerHTML={{ __html: p.excerpt.rendered }} />
+                      </div>
+                    </Link>
+                  );
+                })}
+              </div>
+            </section>
+          )}
         </article>
 
         <aside className="post-sidebar">
