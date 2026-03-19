@@ -74,7 +74,10 @@ export default function PostPage() {
               return (
                 <a key={p.id} href={p.link} className="sidebar-card" target="_blank" rel="noopener noreferrer">
                   {img && <img src={img} alt={p.title.rendered.replace(/<[^>]+>/g, "")} className="sidebar-img" />}
-                  <span dangerouslySetInnerHTML={{ __html: p.title.rendered }} />
+                  <div className="sidebar-card-body">
+                    <span dangerouslySetInnerHTML={{ __html: p.title.rendered }} />
+                    <p dangerouslySetInnerHTML={{ __html: p.excerpt.rendered }} />
+                  </div>
                 </a>
               );
             })}
