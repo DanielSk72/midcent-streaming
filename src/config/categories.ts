@@ -5,6 +5,7 @@
 export interface ServiceFilter {
   label: string;
   color: string;
+  logo: string;    // path to logo image in /public/logos/
   terms: string[]; // keywords matched against post title/excerpt/content
 }
 
@@ -27,13 +28,13 @@ export const CATEGORIES: Record<string, CategoryConfig> = {
     canonicalUrl: 'https://streaming.midcent.se',
     excludedTags: ['tag-bokrecension', 'tag-ljudbocker', 'tag-musikrecension'],
     serviceFilters: [
-      { label: 'Netflix',      color: '#E50914', terms: ['netflix'] },
-      { label: 'HBO Max',      color: '#6A0DAD', terms: ['hbo', 'hbo max', 'hbomax'] },
-      { label: 'Disney+',      color: '#1B4FBB', terms: ['disney+', 'disney plus', 'disneyplus'] },
-      { label: 'Amazon Prime', color: '#1A6DB5', terms: ['amazon prime', 'prime video', 'amazon video'] },
-      { label: 'Apple TV+',    color: '#000000', terms: ['apple tv+', 'apple tv plus', 'appletv', 'apple tv'] },
-      { label: 'Viaplay',      color: '#C1143C', terms: ['viaplay'] },
-      { label: 'Showtime',     color: '#B22222', terms: ['showtime'] },
+      { label: 'Netflix',      color: '#E50914', logo: '/logos/netflix.avif',  terms: ['netflix'] },
+      { label: 'HBO Max',      color: '#6A0DAD', logo: '/logos/hbomax.avif',   terms: ['hbo', 'hbo max', 'hbomax'] },
+      { label: 'Disney+',      color: '#1B4FBB', logo: '/logos/disney.avif',   terms: ['disney+', 'disney plus', 'disneyplus'] },
+      { label: 'Amazon Prime', color: '#1A6DB5', logo: '/logos/amazon.avif',   terms: ['amazon prime', 'prime video', 'amazon video'] },
+      { label: 'Apple TV+',    color: '#000000', logo: '/logos/appletv.avif',  terms: ['apple tv+', 'apple tv plus', 'appletv', 'apple tv'] },
+      { label: 'Viaplay',      color: '#C1143C', logo: '/logos/viaplay.avif',  terms: ['viaplay'] },
+      { label: 'Showtime',     color: '#B22222', logo: '/logos/showtime.avif', terms: ['showtime'] },
     ],
   },
 

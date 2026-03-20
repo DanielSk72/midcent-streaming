@@ -164,10 +164,10 @@ export default function Home() {
                 <button
                   key={s.label}
                   className={`service-btn${activeServices.has(s.label) ? " active" : ""}`}
-                  style={{ background: s.color }}
                   onClick={() => toggleService(s.label)}
+                  title={s.label}
                 >
-                  {s.label}
+                  <img src={s.logo} alt={s.label} />
                 </button>
               ))}
               {activeServices.size > 0 && (
