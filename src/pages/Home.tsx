@@ -16,16 +16,20 @@ function isExcluded(post: WPPost): boolean {
   return post.class_list?.some(c => config.excludedTags!.includes(c)) ?? false;
 }
 
-async function fetchAll(): Promise<WPPost[]> {
+// Fetch page 1 and return it immediately, then fetch remaining pages in background
+async function fetchPage1(): Promise<{ posts: WPPost[]; totalPages: number }> {
   const { data: page1, totalPages } = await wpFetchPaged<WPPost[]>(PAGE1_URL);
-  const rest = totalPages > 1
-    ? await Promise.all(
-        Array.from({ length: totalPages - 1 }, (_, i) =>
-          wpFetch<WPPost[]>(`${BASE}?${LIST_PARAMS}&page=${i + 2}`)
-        )
-      )
-    : [];
-  return [page1, ...rest].flat().filter(p => !isExcluded(p));
+  return { posts: page1.filter(p => !isExcluded(p)), totalPages };
+}
+
+async function fetchRemainingPages(totalPages: number): Promise<WPPost[]> {
+  if (totalPages <= 1) return [];
+  const pages = await Promise.all(
+    Array.from({ length: totalPages - 1 }, (_, i) =>
+      wpFetch<WPPost[]>(`${BASE}?${LIST_PARAMS}&page=${i + 2}`)
+    )
+  );
+  return pages.flat().filter(p => !isExcluded(p));
 }
 
 const NOW = Date.now();
@@ -82,9 +86,13 @@ export default function Home() {
   }
 
   useEffect(() => {
-    fetchAll().then(data => {
-      setPosts(data);
+    // Show page 1 as soon as it arrives, then silently load remaining pages
+    fetchPage1().then(({ posts: page1Posts, totalPages }) => {
+      setPosts(page1Posts);
       setLoading(false);
+      fetchRemainingPages(totalPages).then(rest => {
+        if (rest.length > 0) setPosts(prev => [...prev, ...rest]);
+      });
     });
   }, []);
 
@@ -114,7 +122,18 @@ export default function Home() {
       <Header />
 
       <main>
-        {loading && <div className="loading">Laddar...</div>}
+        {loading && (
+          <div className="skeleton-wrap">
+            <div className="skeleton skeleton-hero" />
+            <div className="container">
+              <div className="skeleton-grid">
+                {Array.from({ length: 6 }).map((_, i) => (
+                  <div key={i} className="skeleton skeleton-card" />
+                ))}
+              </div>
+            </div>
+          </div>
+        )}
 
         {hero && (
           <section className="hero">
