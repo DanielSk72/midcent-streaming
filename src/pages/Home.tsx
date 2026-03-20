@@ -74,7 +74,8 @@ export default function Home() {
     return cached ? cached.filter(p => !isExcluded(p)) : [];
   });
   const [loading, setLoading] = useState(() => !wpGetCached<WPPost[]>(PAGE1_URL));
-  const [activeServices, setActiveServices] = useState<Set<string>>(new Set());
+  const allServiceLabels = config.serviceFilters?.map(s => s.label) ?? [];
+  const [activeServices, setActiveServices] = useState<Set<string>>(new Set(allServiceLabels));
   const [activeTime, setActiveTime] = useState<string | null>(null);
 
   function toggleService(label: string) {
@@ -96,13 +97,15 @@ export default function Home() {
     });
   }, []);
 
-  const filtered = activeServices.size > 0
-    ? posts.filter(p =>
+  // All selected or none selected = show everything. Partial selection = filter.
+  const allSelected = activeServices.size === allServiceLabels.length || activeServices.size === 0;
+  const filtered = allSelected
+    ? posts
+    : posts.filter(p =>
         Array.from(activeServices).some(label =>
           matchesService(p, config.serviceFilters!.find(s => s.label === label)!.terms)
         )
-      )
-    : posts;
+      );
 
   const timePosts  = filterByTime(filtered, activeTime ?? "alla");
   const hero       = timePosts[0];
@@ -147,7 +150,16 @@ export default function Home() {
                 />
               )}
               <div className="hero-overlay">
-                <span className="label">{config.name}</span>
+                <div className="hero-meta">
+                  <span className="label">{config.name}</span>
+                  {detectService(hero) && (
+                    <img
+                      src={detectService(hero)!.logo}
+                      alt={detectService(hero)!.label}
+                      className="hero-service-logo"
+                    />
+                  )}
+                </div>
                 <h1 dangerouslySetInnerHTML={{ __html: hero.title.rendered }} />
                 <p dangerouslySetInnerHTML={{ __html: hero.excerpt.rendered }} />
               </div>
@@ -170,8 +182,8 @@ export default function Home() {
                   <img src={s.logo} alt={s.label} />
                 </button>
               ))}
-              {activeServices.size > 0 && (
-                <button className="service-btn clear-btn" onClick={() => setActiveServices(new Set())}>
+              {!allSelected && (
+                <button className="service-btn clear-btn" onClick={() => setActiveServices(new Set(allServiceLabels))}>
                   Rensa filter ✕
                 </button>
               )}

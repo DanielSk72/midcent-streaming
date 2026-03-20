@@ -209,6 +209,8 @@ body {
   margin: 8px 0;
   line-height: 1.2;
 }
+.hero-meta { display: flex; align-items: center; gap: 12px; margin-bottom: 4px; }
+.hero-service-logo { width: 40px; height: 40px; border-radius: 8px; display: block; }
 .hero-overlay p { font-size: 1rem; opacity: 0.85; max-width: 640px; }
 .hero-overlay p p { margin: 0; }
 
