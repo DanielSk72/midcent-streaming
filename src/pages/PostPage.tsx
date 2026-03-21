@@ -62,11 +62,37 @@ export default function PostPage() {
       <Helmet>
         <title>{plainTitle} — Midcent Streaming</title>
         <meta name="description" content={plainExcerpt} />
+        <meta name="robots" content="index, follow" />
+        <link rel="canonical" href={`https://streaming.midcent.se/${slug}`} />
+
+        {/* Open Graph */}
+        <meta property="og:type" content="article" />
+        <meta property="og:url" content={`https://streaming.midcent.se/${slug}`} />
+        <meta property="og:site_name" content="Midcent" />
+        <meta property="og:locale" content="sv_SE" />
         <meta property="og:title" content={plainTitle} />
         <meta property="og:description" content={plainExcerpt} />
-        <meta property="og:type" content="article" />
         {image && <meta property="og:image" content={image} />}
-        <link rel="canonical" href={`https://streaming.midcent.se/${slug}`} />
+
+        {/* Twitter Card */}
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:title" content={plainTitle} />
+        <meta name="twitter:description" content={plainExcerpt} />
+        {image && <meta name="twitter:image" content={image} />}
+
+        {/* JSON-LD — structured data for Google to understand article content */}
+        <script type="application/ld+json">{JSON.stringify({
+          "@context": "https://schema.org",
+          "@type": "Article",
+          "headline": plainTitle,
+          "description": plainExcerpt,
+          ...(image ? { "image": image } : {}),
+          "datePublished": post.date,
+          "dateModified": post.modified,
+          "author": { "@type": "Organization", "name": "Midcent", "url": "https://midcent.se" },
+          "publisher": { "@type": "Organization", "name": "Midcent", "url": "https://midcent.se" },
+          "mainEntityOfPage": { "@type": "WebPage", "@id": `https://streaming.midcent.se/${slug}` }
+        })}</script>
       </Helmet>
 
       <Header />

@@ -3,6 +3,7 @@ export interface WPPost {
   slug: string;
   link: string;
   date: string;
+  modified: string;
   title: { rendered: string };
   excerpt: { rendered: string };
   content: { rendered: string };

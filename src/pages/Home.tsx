@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { Helmet } from "react-helmet-async";
 import { wpFetch, wpFetchPaged, wpGetCached } from "../lib/wpCache";
+import { prefetch } from "../lib/prefetch";
 import type { WPPost } from "../types/wordpress";
 import Header from "../components/Header";
 import { getCategoryConfig } from "../config/categories";
@@ -119,7 +120,37 @@ export default function Home() {
       <Helmet>
         <title>{config.metaTitle}</title>
         <meta name="description" content={config.metaDescription} />
+        <meta name="robots" content="index, follow" />
         <link rel="canonical" href={config.canonicalUrl} />
+
+        {/* Open Graph */}
+        <meta property="og:type" content="website" />
+        <meta property="og:url" content={config.canonicalUrl} />
+        <meta property="og:site_name" content="Midcent" />
+        <meta property="og:locale" content="sv_SE" />
+        <meta property="og:title" content={config.metaTitle} />
+        <meta property="og:description" content={config.metaDescription} />
+        {config.ogImage && <meta property="og:image" content={config.ogImage} />}
+
+        {/* Twitter Card */}
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:title" content={config.metaTitle} />
+        <meta name="twitter:description" content={config.metaDescription} />
+        {config.ogImage && <meta name="twitter:image" content={config.ogImage} />}
+
+        {/* JSON-LD — helps Google understand the site structure */}
+        <script type="application/ld+json">{JSON.stringify({
+          "@context": "https://schema.org",
+          "@type": "WebSite",
+          "name": `${config.name} — Midcent`,
+          "url": config.canonicalUrl,
+          "description": config.metaDescription,
+          "potentialAction": {
+            "@type": "SearchAction",
+            "target": "https://midcent.se/?s={search_term_string}",
+            "query-input": "required name=search_term_string"
+          }
+        })}</script>
       </Helmet>
 
       <Header />
@@ -140,7 +171,7 @@ export default function Home() {
 
         {hero && (
           <section className="hero">
-            <a href={hero.link}>
+            <a href={hero.link} onMouseEnter={() => prefetch(hero.link)} onTouchStart={() => prefetch(hero.link)}>
               {hero._embedded?.["wp:featuredmedia"]?.[0]?.source_url && (
                 <img
                   src={hero._embedded["wp:featuredmedia"][0].source_url}
@@ -210,7 +241,7 @@ export default function Home() {
                   const image = post._embedded?.["wp:featuredmedia"]?.[0]?.source_url;
                   const service = detectService(post);
                   return (
-                    <a href={post.link} key={post.id} className="card-large">
+                    <a href={post.link} key={post.id} className="card-large" onMouseEnter={() => prefetch(post.link)} onTouchStart={() => prefetch(post.link)}>
                       <div className="card-img-wrap">
                         {image && <img src={image} alt={post._embedded?.["wp:featuredmedia"]?.[0]?.alt_text} className="card-image" loading="lazy" />}
                         {service && <span className="service-badge" style={{ background: service.color }}>{service.label}</span>}
@@ -234,7 +265,7 @@ export default function Home() {
                   const image = post._embedded?.["wp:featuredmedia"]?.[0]?.source_url;
                   const service = detectService(post);
                   return (
-                    <a href={post.link} key={post.id} className="card">
+                    <a href={post.link} key={post.id} className="card" onMouseEnter={() => prefetch(post.link)} onTouchStart={() => prefetch(post.link)}>
                       <div className="card-img-wrap">
                         {image && <img src={image} alt={post._embedded?.["wp:featuredmedia"]?.[0]?.alt_text} className="card-image" loading="lazy" />}
                         {service && <span className="service-badge" style={{ background: service.color }}>{service.label}</span>}
@@ -258,7 +289,7 @@ export default function Home() {
                   const image = post._embedded?.["wp:featuredmedia"]?.[0]?.source_url;
                   const service = detectService(post);
                   return (
-                    <a href={post.link} key={post.id} className="card-list">
+                    <a href={post.link} key={post.id} className="card-list" onMouseEnter={() => prefetch(post.link)} onTouchStart={() => prefetch(post.link)}>
                       <div className="card-img-wrap">
                         {image && <img src={image} alt={post._embedded?.["wp:featuredmedia"]?.[0]?.alt_text} className="card-list-image" loading="lazy" />}
                         {service && <span className="service-badge" style={{ background: service.color }}>{service.label}</span>}
@@ -283,7 +314,7 @@ export default function Home() {
                   const image = post._embedded?.["wp:featuredmedia"]?.[0]?.source_url;
                   const service = detectService(post);
                   return (
-                    <a href={post.link} key={post.id} className="card">
+                    <a href={post.link} key={post.id} className="card" onMouseEnter={() => prefetch(post.link)} onTouchStart={() => prefetch(post.link)}>
                       <div className="card-img-wrap">
                         {image && <img src={image} alt={post._embedded?.["wp:featuredmedia"]?.[0]?.alt_text} className="card-image" loading="lazy" />}
                         {service && <span className="service-badge" style={{ background: service.color }}>{service.label}</span>}

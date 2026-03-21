@@ -15,6 +15,7 @@ export interface CategoryConfig {
   metaTitle: string;
   metaDescription: string;
   canonicalUrl: string;
+  ogImage?: string;              // Static og:image for social sharing (1200x630 recommended)
   excludedTags?: string[];       // WP class_list values to exclude
   serviceFilters?: ServiceFilter[]; // Optional — only for categories that need them
 }
@@ -23,9 +24,10 @@ export const CATEGORIES: Record<string, CategoryConfig> = {
   'streaming.midcent.se': {
     wpCategoryId: 1,
     name: 'Streaming',
-    metaTitle: 'Streaming — Midcent',
-    metaDescription: 'Bästa tips om film, serier och streaming för dig som vet vad du vill se.',
+    metaTitle: 'Streamingnyheter – filmer och serier för Generation X | Midcent',
+    metaDescription: 'Midcents guide till streaming – vi bevakar filmer och serier på Netflix, HBO Max, Disney+ och Amazon Prime. För dig i Generation X som vet vad du vill se.',
     canonicalUrl: 'https://streaming.midcent.se',
+    ogImage: 'https://midcent.se/wp-content/uploads/2024/04/underhallning.png',
     excludedTags: ['tag-bokrecension', 'tag-ljudbocker', 'tag-musikrecension'],
     serviceFilters: [
       { label: 'Netflix',      color: '#E50914', logo: '/logos/netflix.avif',  terms: ['netflix'] },
