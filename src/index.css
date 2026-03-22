@@ -24,14 +24,16 @@
   }
 }
 
-html { overflow-x: hidden; }
+/* overflow-x: clip (not hidden) — clip prevents horizontal scroll without creating a new scroll container,
+   which allows position: sticky on the header to work correctly on mobile */
+html { overflow-x: clip; }
 
 body {
   font-family: 'Open Sans', sans-serif;
   font-weight: 300;
   background: var(--bg);
   color: var(--text);
-  overflow-x: hidden;
+  overflow-x: clip;
 }
 
 /* Header */
